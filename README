@@ -1,0 +1,5 @@
+Export Org-mode files as editable web pages                -*- org -*-
+
+org-ehtml serves Org-mode files as editable web pages using an elnode
+Emacs web server for server-side processing and Javascript for
+interaction through the browser.

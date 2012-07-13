@@ -1,0 +1,5 @@
+/* highlight editable secitons on mouseover */
+.editable{ background: lightyellow; }
+
+/* hide Org-mode text from display */
+.raw-org{ display: none; }
