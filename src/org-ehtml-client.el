@@ -47,8 +47,10 @@
    "/*]]>*///-->\n</script>\n"))
 
 (defvar org-ehtml-client-wrap-template
-  (concat "<div class=\"edit_in_place\">%html-text</div>"
-          "<div class=\"raw-org\">%org-text</div>"))
+  (concat
+   "<div class=\"edit_in_place\">%html-text</div>"
+   "<div class=\"raw-org\" contents-begin=\"%begin\" contents-end=\"%end\">"
+   "%org-text</div>"))
 
 (defun org-ehtml-client-editable-p (element info)
   (let ((parent (org-export-get-parent element)))
@@ -69,11 +71,15 @@
               (html-text (,e-html-function element contents info))
               (org-text  (or (org-element-interpret-data element)
                              original-contents
-                             "NIL")))
+                             (error "no org-text found for %s" (car element)))))
          (if (org-ehtml-client-editable-p element info)
              (org-fill-template org-ehtml-client-wrap-template
-                                (list (cons "html-text" html-text)
-                                      (cons "org-text"  org-text)))
+              `(("html-text" . ,html-text)
+                ("org-text"  . ,org-text)
+                ("begin"     . ,(number-to-string
+                                 (plist-get (cadr element) :contents-begin)))
+                ("end"       . ,(number-to-string
+                                 (plist-get (cadr element) :contents-end)))))
            html-text)))))
 
 (eval `(org-export-define-derived-backend ehtml e-html

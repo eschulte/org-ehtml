@@ -7,17 +7,19 @@ $(document).ready(function(){ set_clickable(); });
 function set_clickable(){
   // to every element with class="edit_in_place"
   $('.edit_in_place').click(function(){
-    var org = $(this).next().html();
+    var org  = $(this).next().html();
+    var beg  = $(this).next().attr("contents-begin");
+    var end  = $(this).next().attr("contents-end");
     var html = $(this).html();
     $(this).after(
-      '<div><textarea rows="10" cols="80">'+org+'</textarea>'+
-        '<div><input type="button" value="SAVE" class="save_button" />'+
-        '     <input type="button" value="CANCEL" class="cancel_button" />'+
+      '<div><textarea rows="10" cols="80">'+org+'</textarea><div>'+
+        '<input type="button" value="SAVE" class="save_button" />'+
+        '<input type="button" value="CANCEL" class="cancel_button" />'+
         '</div></div>');
     // remove the orignal html
-    $(this).remove();;
+    $(this).remove();
     // call these functions when buttons are hit
-    $('.save_button').click(function(){ save_changes(this, html); });
+    $('.save_button').click(function(){ save_changes(this, html, beg, end); });
     $('.cancel_button').click(function(){ abort_changes(this, html); });
   });
   // make every div with class="edit_in_place" highlight on mouseover
@@ -25,7 +27,7 @@ function set_clickable(){
   $('.edit_in_place').mouseout(function() { $(this).removeClass("editable"); });
 };
 
-function save_changes(obj, new_html){
+function save_changes(obj, new_html, beg, end){
   $.post("update-this-org-file",
          {content: new_html}, function(txt){ alert(txt); });
   // In real life the above post request would hit the elnode server,
