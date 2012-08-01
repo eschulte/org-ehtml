@@ -29,22 +29,43 @@
 
 
 ;;; elnode setup and handlers
-(defconst org-ehtml-server-urls
-  '(("^$"      . org-ehtml-default-handler)
+(defvar org-ehtml-docroot "~/"
+  "Document root from which to serve Org-mode files.")
+
+(defvar org-ehtml-server-urls
+  '(("^/$"     . org-ehtml-landing-page)
+    ("^/"      . org-ehtml-file-handler)
     ("^edit/$" . org-ehtml-edit-handler)))
+
+(defun org-ehtml-landing-page (httpcon)
+  "Default ehtml landing page."
+  (elnode-http-start httpcon "200" '("Content-type" . "text/html"))
+  (elnode-http-return httpcon
+    (concat
+     "<html><head><title>org-ehtml</title></head>"
+     "<body><center>Welcome to <tt>org-ehtml</tt>.</center></body></html>")))
 
 (defun org-ehtml-server-dispatcher-handler (httpcon)
   (elnode-log-access "org-ehtml" httpcon)
   (elnode-dispatcher httpcon org-ehtml-server-urls))
 
-(defun org-ehtml-default-handler (httpcon)
-  (let ((path ()))
-    (elnode-send-file httpcon
-                      (file-contents (org-ehtml-client-export path)))))
+(defun org-ehtml-file-handler (httpcon)
+  (elnode-docroot-for org-ehtml-docroot :with file :on httpcon :do
+    (elnode-send-file httpcon (org-ehtml-client-export-file file))))
 
 (defun org-ehtml-edit-handler (httpcon)
   (let ((params (elnode-http-params httpcon)))
     (message "These are the http-params: \n %s" params)))
+
+;; To run execute the following
+;;
+;;   (elnode-start 'org-ehtml-server-dispatcher-handler)
+;;
+;; and then point your browser to http://localhost:8000
+;;
+;; to stop run the following
+;;
+;;  (elnode-stop 8000)
 
 
 ;;; Org-mode file manipulation

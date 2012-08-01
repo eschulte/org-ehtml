@@ -1,0 +1,18 @@
+#                                                          -*- org -*-
+
+* suggestions on testing from nicferrier
+: 15:29 < nicferrier> _schulte_:
+:                     https://github.com/nicferrier/elnode/blob/master/elnode-client.el#L534
+: 15:29 < _schulte_> nicferrier: great, thanks
+: 15:29 < nicferrier> beware, that module has had a lot removed from it - the child emacs
+:                     stuff has been removed to this rle module I'm working on
+: 15:30 < nicferrier> but that test should hold up. it works in my automated tests anyway.
+: 15:30 < nicferrier> having said that, the fakir stuff is really very good, it's mostly a
+:                     full stack test.
+: 15:31 < nicferrier> just uses a fake process.
+: ...
+: 15:34 < _schulte_> oh, turns out `sit-for' was all I needed (for my very simple test)
+:                    http://sprunge.us/eSGA
+: ...
+: 15:35 < nicferrier> _schulte_: if you're gonna do this you might also be interested in my
+:                     phantomjs stuff - let's you test elnode apps in a headless browser.

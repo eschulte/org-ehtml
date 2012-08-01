@@ -38,6 +38,10 @@
 (defvar test-org-ehtml-simple-file
   (expand-file-name "simple.org" test-org-ehtml-example-dir))
 
+(defvar test-org-ehtml-port 8888)
+
+
+;;; Export tests
 (ert-deftest org-ehtml-simple-export ()
   (flet ((has (it)
               (goto-char (point-min))
@@ -61,6 +65,21 @@
   (let ((html-file (org-ehtml-client-export-file
                     test-org-ehtml-simple-file)))
     (should (file-exists-p html-file))))
+
+
+;;; server tests
+(ert-deftest org-ethml-elnode-server-file ()
+  (let ((org-ehtml-docroot test-org-ehtml-example-dir))
+    (unwind-protect
+        (progn
+          (elnode-start 'org-ehtml-server-dispatcher-handler
+                        :port test-org-ehtml-port)
+          (async-shell-command (format "curl localhost:%s" test-org-ehtml-port))
+          (with-current-buffer "*Async Shell Command*"
+            (while (get-buffer-process (current-buffer)) (sit-for 0.1))
+            (goto-char (point-min))
+            (should (re-search-forward "org-ehtml")))
+          (elnode-stop test-org-ehtml-port)))))
 
 (provide 'test-org-ehtml)
 ;;; test-org-ehtml.el ends here
