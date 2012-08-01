@@ -9,10 +9,11 @@ function set_clickable(){
   $('.edit_in_place').click(function(){
     var org = $(this).next().html();
     var html = $(this).html();
-    $(this).after('<div><textarea rows="10" cols="80">'+org+'</textarea>'+
-                  '<div><input type="button" value="SAVE" class="save_button" />'+
-                  '     <input type="button" value="CANCEL" class="cancel_button" />'+
-                  '</div></div>');
+    $(this).after(
+      '<div><textarea rows="10" cols="80">'+org+'</textarea>'+
+        '<div><input type="button" value="SAVE" class="save_button" />'+
+        '     <input type="button" value="CANCEL" class="cancel_button" />'+
+        '</div></div>');
     // remove the orignal html
     $(this).remove();;
     // call these functions when buttons are hit
@@ -25,18 +26,21 @@ function set_clickable(){
 };
 
 function save_changes(obj, new_html){
-  $.post("update-this-org-file", {content: new_html}, function(txt){ alert(txt); });
+  $.post("update-this-org-file",
+         {content: new_html}, function(txt){ alert(txt); });
   // In real life the above post request would hit the elnode server,
   // which would in turn respond with the HTML that we would use to
   // replace the element.  For now we'll just replace with the raw
   // text verbatim.
-  $(obj).parent().parent().after('<div class="edit_in_place">'+new_html+'</div>');
+  $(obj).parent().parent().after(
+    '<div class="edit_in_place">'+new_html+'</div>');
   $(obj).parent().parent().remove();
   set_clickable();
 };
 
 function abort_changes(obj, old_html){
-  $(obj).parent().parent().after('<div class="edit_in_place">'+old_html+'</div>');
+  $(obj).parent().parent().after(
+    '<div class="edit_in_place">'+old_html+'</div>');
   $(obj).parent().parent().remove();
   set_clickable();
 };
