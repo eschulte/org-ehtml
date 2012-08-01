@@ -40,6 +40,13 @@
 
 (defvar test-org-ehtml-port 8888)
 
+(defun test-org-ehtml-url-to-string (url)
+  (async-shell-command (format "curl localhost:%s/%s" test-org-ehtml-port url))
+  (with-current-buffer "*Async Shell Command*"
+    (while (get-buffer-process (current-buffer)) (sit-for 0.1))
+    (goto-char (point-min))
+    (buffer-string)))
+
 
 ;;; Export tests
 (ert-deftest org-ehtml-simple-export ()
@@ -74,12 +81,10 @@
         (progn
           (elnode-start 'org-ehtml-server-dispatcher-handler
                         :port test-org-ehtml-port)
-          (async-shell-command (format "curl localhost:%s" test-org-ehtml-port))
-          (with-current-buffer "*Async Shell Command*"
-            (while (get-buffer-process (current-buffer)) (sit-for 0.1))
-            (goto-char (point-min))
-            (should (re-search-forward "org-ehtml")))
+          (should (string-match "org-ehtml" (test-org-ehtml-url-to-string "")))
           (elnode-stop test-org-ehtml-port)))))
+
+(setq result (test-org-ehtml-url-to-string "simple.org"))
 
 (provide 'test-org-ehtml)
 ;;; test-org-ehtml.el ends here
