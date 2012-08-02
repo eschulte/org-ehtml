@@ -12,4 +12,6 @@ mus. Nulla posuere. Donec vitae dolor. Nullam _tristique_ diam non
 turpis. Cras placerat accumsan nulla. Nullam rutrum. Nam vestibulum
 accumsan nisl.
 
-analog /digital/ *other*
+- one
+- two
+- three

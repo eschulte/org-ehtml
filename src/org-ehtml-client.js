@@ -37,7 +37,6 @@ function save_changes(obj, new_org, beg, end){
           path: window.location.pathname},
          // TODO: this should also update contents-begin and contents-end
          function(html){
-           alert(html);
            $(obj).parent().parent().after(
              '<div class="edit_in_place">'+html+'</div>');
            $(obj).parent().parent().remove();
