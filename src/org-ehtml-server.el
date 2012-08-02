@@ -55,13 +55,25 @@
     (elnode-send-file httpcon (org-ehtml-client-export-file file))))
 
 (defun org-ehtml-edit-handler (httpcon)
-  (let* ((params (elnode-http-params httpcon))
-         (path   (cdr (assoc "path" params)))
-         (beg    (cdr (assoc "beg"  params)))
-         (end    (cdr (assoc "end"  params)))
-         (org    (cdr (assoc "org"  params))))
-    (message "in %S from %S to %S put %S"
-             path beg end org)))
+  (let ((params (elnode-http-params httpcon)))
+    (if (= ?/ (aref (cdr (assoc "path" params)) 0))
+        (org-ehtml-update-file
+         (substring (cdr (assoc "path" params)) 1)
+         (string-to-number (cdr (assoc "beg"  params)))
+         (string-to-number (cdr (assoc "end"  params)))
+         (cdr (assoc "org"  params)))
+      (error "path does not begin with a '/'"))
+    (elnode-http-start httpcon "200" '("Content-type" . "text/html"))
+    (elnode-http-return httpcon
+      (org-export-string (cdr (assoc "org" params)) 'html org-ehtml-docroot))))
+
+(defun org-ehtml-update-file (path beg end new)
+  (save-excursion
+    (find-file (expand-file-name path org-ehtml-docroot))
+    (delete-region beg end)
+    (goto-char beg)
+    (insert new)
+    (save-buffer)))
 
 ;; To run execute the following
 ;;
