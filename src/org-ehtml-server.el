@@ -34,8 +34,7 @@
 
 (defvar org-ehtml-server-urls
   '(("^/$"     . org-ehtml-landing-page)
-    ("^/"      . org-ehtml-file-handler)
-    ("^edit/$" . org-ehtml-edit-handler)))
+    ("^/"      . org-ehtml-file-handler)))
 
 (defun org-ehtml-landing-page (httpcon)
   "Default ehtml landing page."
@@ -47,15 +46,22 @@
 
 (defun org-ehtml-server-dispatcher-handler (httpcon)
   (elnode-log-access "org-ehtml" httpcon)
-  (elnode-dispatcher httpcon org-ehtml-server-urls))
+  (elnode-method httpcon
+    (GET  (elnode-dispatcher httpcon org-ehtml-server-urls))
+    (POST (org-ehtml-edit-handler httpcon))))
 
 (defun org-ehtml-file-handler (httpcon)
   (elnode-docroot-for org-ehtml-docroot :with file :on httpcon :do
     (elnode-send-file httpcon (org-ehtml-client-export-file file))))
 
 (defun org-ehtml-edit-handler (httpcon)
-  (let ((params (elnode-http-params httpcon)))
-    (message "These are the http-params: \n %s" params)))
+  (let* ((params (elnode-http-params httpcon))
+         (path   (cdr (assoc "path" params)))
+         (beg    (cdr (assoc "beg"  params)))
+         (end    (cdr (assoc "end"  params)))
+         (org    (cdr (assoc "org"  params))))
+    (message "in %S from %S to %S put %S"
+             path beg end org)))
 
 ;; To run execute the following
 ;;

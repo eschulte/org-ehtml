@@ -2,7 +2,7 @@
 // License GPLV3
 
 // after the page loads, run the set set_clickable function
-$(document).ready(function(){ set_clickable(); });
+$(document).ready( function(){ set_clickable(); } );
 
 function set_clickable(){
   // to every element with class="edit_in_place"
@@ -19,7 +19,9 @@ function set_clickable(){
     // remove the orignal html
     $(this).remove();
     // call these functions when buttons are hit
-    $('.save_button').click(function(){ save_changes(this, html, beg, end); });
+    $('.save_button').click(function(){
+      save_changes(this, $(this).parent().prev().val(), beg, end);
+    });
     $('.cancel_button').click(function(){ abort_changes(this, html); });
   });
   // make every div with class="edit_in_place" highlight on mouseover
@@ -27,17 +29,19 @@ function set_clickable(){
   $('.edit_in_place').mouseout(function() { $(this).removeClass("editable"); });
 };
 
-function save_changes(obj, new_html, beg, end){
-  $.post("update-this-org-file",
-         {content: new_html}, function(txt){ alert(txt); });
-  // In real life the above post request would hit the elnode server,
-  // which would in turn respond with the HTML that we would use to
-  // replace the element.  For now we'll just replace with the raw
-  // text verbatim.
-  $(obj).parent().parent().after(
-    '<div class="edit_in_place">'+new_html+'</div>');
-  $(obj).parent().parent().remove();
-  set_clickable();
+function save_changes(obj, new_org, beg, end){
+  $.post("/",
+         {org: new_org,
+          beg: beg,
+          end: end,
+          path: window.location.pathname},
+         // TODO: this should also update contents-begin and contents-end
+         function(html){
+           $(obj).parent().parent().after(
+             '<div class="edit_in_place">'+html+'</div>');
+           $(obj).parent().parent().remove();
+           set_clickable();
+         });
 };
 
 function abort_changes(obj, old_html){
