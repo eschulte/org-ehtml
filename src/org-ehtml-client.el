@@ -52,10 +52,13 @@
    "<div class=\"raw-org\" contents-begin=\"%begin\" contents-end=\"%end\">"
    "%org-text</div>"))
 
+(defvar org-ehtml-everything-editable nil
+  "Set to a true value to everything exported by org-ehtml editable.")
+
 (defun org-ehtml-client-editable-p (element info)
   (let ((parent (org-export-get-parent element)))
     (cond ((eq (car parent) 'headline)
-           (member "ehtml" (org-export-get-tags parent info)))
+           (member "EDITABLE" (org-export-get-tags parent info)))
           ((eq (car parent) 'org-data)
            (member "EDITABLE"
                    (mapcar (lambda (it) (plist-get (cadr it) :key))
@@ -77,7 +80,8 @@
                              original-contents
                              (error "no org-text found for %s" (car element)))))
          (push info my-info)
-         (if (org-ehtml-client-editable-p element info)
+         (if (or org-ehtml-everything-editable
+                 (org-ehtml-client-editable-p element info))
              (org-fill-template org-ehtml-client-wrap-template
               `(("html-text" . ,html-text)
                 ("org-text"  . ,org-text)

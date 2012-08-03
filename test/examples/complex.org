@@ -11,7 +11,7 @@ A complex example including;
   - source
   - verse
 
-* Top level headline                                                  :ehtml:
+* Top level headline                                               :EDITABLE:
 
 Lorem ipsum *dolor* sit amet, consectetuer adipiscing elit. Donec
 hendrerit tempor tellus. Donec pretium posuere tellus. Proin quam
