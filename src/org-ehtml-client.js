@@ -29,16 +29,18 @@ function set_clickable(){
   $('.edit_in_place').mouseout(function() { $(this).removeClass("editable"); });
 };
 
-function save_changes(obj, new_org, beg, end){
+function save_changes(obj, org, beg, end){
   $.post("/",
-         {org: new_org,
+         {org: org,
           beg: beg,
           end: end,
           path: window.location.pathname},
-         // TODO: this should also update contents-begin and contents-end
-         function(html){
-           $(obj).parent().parent().after(
-             '<div class="edit_in_place">'+html+'</div>');
+         function(html){ // replace the html and the raw org
+           $(obj).parent().parent().next().after(
+             '<div class="edit_in_place">'+html+'</div>'+
+               '<div class="raw-org" contents-begin="'+beg+
+               '" contents-end="'+(org.length+Number(beg))+'">'+org+'</div>');
+           $(obj).parent().parent().next().remove();
            $(obj).parent().parent().remove();
            set_clickable();
          });

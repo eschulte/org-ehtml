@@ -35,6 +35,12 @@
 (defun file-contents (path)
   (while-visiting-file path (buffer-string)))
 
+(defun replace-region (start end to-string)
+  "Replace the text between START and END with TO-STRING."
+  (interactive "r")
+  (delete-region start end)
+  (save-excursion (goto-char start) (insert to-string)))
+
 (defvar org-ehtml-base
   (file-name-directory (or load-file-name (buffer-file-name))))
 
