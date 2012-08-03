@@ -60,13 +60,13 @@
         ;; should include the ehtml css header
         (has ".editable")
         ;; should include the ehtml javascript header
-        (has "$(document).ready(function(){ set_clickable(); });")
+        (has "set_clickable()")
         ;; the paragraph should be editable
         (has "<div class=\"edit_in_place\"><p>")
         ;; the plain list should be editable
         (has "<div class=\"edit_in_place\"><ul>")
         ;; the elements of the plain list should not be editable
-        (has "<li>first")))))
+        (has "<li>")))))
 
 (ert-deftest org-ehtml-export-file ()
   (let ((html-file (org-ehtml-client-export-file
@@ -81,10 +81,9 @@
         (progn
           (elnode-start 'org-ehtml-server-dispatcher-handler
                         :port test-org-ehtml-port)
-          (should (string-match "org-ehtml" (test-org-ehtml-url-to-string "")))
+          (should (string-match "lorem"
+                                (test-org-ehtml-url-to-string "simple.org")))
           (elnode-stop test-org-ehtml-port)))))
-
-(setq result (test-org-ehtml-url-to-string "simple.org"))
 
 (provide 'test-org-ehtml)
 ;;; test-org-ehtml.el ends here
