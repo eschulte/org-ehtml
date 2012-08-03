@@ -3,3 +3,35 @@ Export Org-mode files as editable web pages                -*- org -*-
 org-ehtml serves Org-mode files as editable web pages using an elnode
 Emacs web server for server-side processing and Javascript for
 interaction through the browser.
+
+Follow these steps to try this out locally.  Note that you will need a
+very recent version of elnode in your load path.  Elnode can be
+obtained from http://nicferrier.github.com/elnode/.
+
+1. Load the required libraries.
+   #+begin_src emacs-lisp
+     (require 'org-ehtml-client)
+     (require 'org-ehtml-server)
+     (require 'test-org-ehtml)
+   #+end_src
+
+2. Run the tests to make sure everything is working.
+   #+begin_src emacs-lisp
+     (ert 'org-ethml)
+   #+end_src
+
+3. Set the root of your directory of Org-mode files.  For now we'll
+   just use the example files used in the tests, later you can
+   customize this variable.
+   #+begin_src emacs-lisp
+     (setq org-ehtml-docroot test-org-ehtml-example-dir)
+   #+end_src
+
+4. Start up elnode.
+   #+begin_src emacs-lisp
+     (elnode-start 'org-ehtml-server-dispatcher-handler)
+   #+end_src
+
+5. Point your browser to http://localhost:8000/simple.org and move
+   your mouse over the page.  Editable portions of the page will be
+   highlighted, click on these to edit.
