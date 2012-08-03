@@ -77,9 +77,9 @@
               `(("html-text" . ,html-text)
                 ("org-text"  . ,org-text)
                 ("begin"     . ,(number-to-string
-                                 (plist-get (cadr element) :contents-begin)))
+                                 (plist-get (cadr element) :begin)))
                 ("end"       . ,(number-to-string
-                                 (plist-get (cadr element) :contents-end)))))
+                                 (plist-get (cadr element) :end)))))
            html-text)))))
 
 (eval `(org-export-define-derived-backend ehtml e-html
