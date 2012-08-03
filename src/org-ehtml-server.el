@@ -59,9 +59,9 @@ and the edit is reverted.")
       (error "path does not begin with a '/'"))
     (elnode-http-start httpcon "200" '("Content-type" . "text/html"))
     (elnode-http-return httpcon
-      (org-export-string (cdr (assoc "org" params)) 'html org-ehtml-docroot))))
+      (org-export-string org 'html org-ehtml-docroot))))
 
-(defun org-ehtml-update-file (path beg end new)
+(defun org-ehtml-update-file (path beg end new) ;; TODO: sub-folders
   (org-babel-with-temp-filebuffer (expand-file-name path org-ehtml-docroot)
     (let ((orig (buffer-string)))
       (replace-region beg end new)

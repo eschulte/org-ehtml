@@ -47,6 +47,17 @@
     (goto-char (point-min))
     (buffer-string)))
 
+(defmacro test-org-ehtml-with (file html-var &rest body)
+  (declare (indent 2))
+  `(let ((org-ehtml-docroot test-org-ehtml-example-dir))
+     (elnode-start 'org-ehtml-server-dispatcher-handler
+                   :port test-org-ehtml-port)
+     (unwind-protect
+         (let ((,html-var (test-org-ehtml-url-to-string ,file)))
+           ,@body)
+       (elnode-stop test-org-ehtml-port))))
+(def-edebug-spec test-org-ehtml-with (form form body))
+
 
 ;;; Export tests
 (ert-deftest org-ehtml-simple-export ()
@@ -75,15 +86,13 @@
 
 
 ;;; server tests
-(ert-deftest org-ethml-elnode-server-file ()
-  (let ((org-ehtml-docroot test-org-ehtml-example-dir))
-    (unwind-protect
-        (progn
-          (elnode-start 'org-ehtml-server-dispatcher-handler
-                        :port test-org-ehtml-port)
-          (should (string-match "lorem"
-                                (test-org-ehtml-url-to-string "simple.org")))
-          (elnode-stop test-org-ehtml-port)))))
+(ert-deftest org-ethml-elnode-serve-simple ()
+  (test-org-ehtml-with "simple.org" html
+    (should (string-match "lorem" html))))
+
+(ert-deftest org-ethml-elnode-serve-complex ()
+  (test-org-ehtml-with "complex.org" html
+    (should (string-match "lorem" html))))
 
 (provide 'test-org-ehtml)
 ;;; test-org-ehtml.el ends here

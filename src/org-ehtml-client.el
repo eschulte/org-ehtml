@@ -84,8 +84,13 @@
 
 (eval `(org-export-define-derived-backend ehtml e-html
          :translate-alist
-         ((paragraph  . ,(def-ehtml-wrap org-e-html-paragraph))
-          (plain-list . ,(def-ehtml-wrap org-e-html-plain-list)))))
+         ((paragraph   . ,(def-ehtml-wrap org-e-html-paragraph))
+          (plain-list  . ,(def-ehtml-wrap org-e-html-plain-list))
+          (table       . ,(def-ehtml-wrap org-e-html-table))
+          (verbatim    . ,(def-ehtml-wrap org-e-html-verbatim))
+          (quote-block . ,(def-ehtml-wrap org-e-html-quote-block))
+          ;; (src-block   . ,(def-ehtml-wrap org-e-html-src-block))
+          (verse-block . ,(def-ehtml-wrap org-e-html-verse-block)))))
 
 (defun org-ehtml-client-export-to-html
   (&optional subtreep visible-only body-only ext-plist pub-dir)
@@ -97,8 +102,7 @@
          ;; custom headers
          (org-e-html-style-extra org-ehtml-client-style)
          (org-e-html-scripts org-ehtml-client-scripts))
-    (org-export-to-file 'ehtml
-                        file subtreep visible-only body-only ext-plist)))
+    (org-export-to-file 'ehtml file subtreep visible-only body-only ext-plist)))
 
 (defun org-ehtml-client-export-file (file)
   "Export FILE's contents to editable HTML."
