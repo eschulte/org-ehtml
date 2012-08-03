@@ -94,5 +94,9 @@
   (test-org-ehtml-with "complex.org" html
     (should (string-match "lorem" html))))
 
+(ert-deftest org-ethml-elnode-serve-all-editable ()
+  (test-org-ehtml-with "all-editable.org" html
+    (should (string-match "edit_in_place" html))))
+
 (provide 'test-org-ehtml)
 ;;; test-org-ehtml.el ends here

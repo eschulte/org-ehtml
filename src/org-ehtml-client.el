@@ -56,7 +56,11 @@
   (let ((parent (org-export-get-parent element)))
     (cond ((eq (car parent) 'headline)
            (member "ehtml" (org-export-get-tags parent info)))
-          ((eq (car parent) 'org-data) nil)
+          ((eq (car parent) 'org-data)
+           (member "EDITABLE"
+                   (mapcar (lambda (it) (plist-get (cadr it) :key))
+                           (remove-if-not (lambda (it) (equal 'keyword (car it)))
+                                          (cdaddr parent)))))
           ((member (car parent) '(paragraph plain-list)) nil)
           (t (org-ehtml-client-editable-p parent info)))))
 
@@ -72,6 +76,7 @@
               (org-text  (or (org-element-interpret-data element)
                              original-contents
                              (error "no org-text found for %s" (car element)))))
+         (push info my-info)
          (if (org-ehtml-client-editable-p element info)
              (org-fill-template org-ehtml-client-wrap-template
               `(("html-text" . ,html-text)
