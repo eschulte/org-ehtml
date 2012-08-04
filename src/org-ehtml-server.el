@@ -38,7 +38,7 @@ and the edit is reverted.")
 (defvar org-ehtml-after-save-hook nil
   "Hook run in a file buffer after saving web edits.")
 
-(defun org-ehtml-server-dispatcher-handler (httpcon)
+(defun org-ehtml-handler (httpcon)
   (elnode-log-access "org-ehtml" httpcon)
   (elnode-method httpcon
     (GET  (org-ehtml-file-handler httpcon))
@@ -50,26 +50,21 @@ and the edit is reverted.")
 
 (defun org-ehtml-edit-handler (httpcon)
   (let* ((params (elnode-http-params httpcon))
-         (path                  (cdr (assoc "path" params)))
+         (path       (substring (cdr (assoc "path" params)) 1))
          (beg (string-to-number (cdr (assoc "beg"  params))))
          (end (string-to-number (cdr (assoc "end"  params))))
          (org                   (cdr (assoc "org"  params))))
-    (if (= ?/ (aref path 0))
-        (org-ehtml-update-file (substring path 1) beg end org)
-      (error "path does not begin with a '/'"))
+    (org-babel-with-temp-filebuffer (expand-file-name path org-ehtml-docroot)
+      (let ((orig (buffer-string)))
+        (replace-region beg end org)
+        (if (run-hook-with-args-until-failure 'org-ehtml-before-save-hook)
+            (save-buffer)
+          (replace-region (point-min) (point-max) orig)
+          (elnode-send-500 httpcon "edit failed `org-ehtml-before-save-hook'")))
+      (run-hooks 'org-ehtml-after-save-hook))
     (elnode-http-start httpcon "200" '("Content-type" . "text/html"))
     (elnode-http-return httpcon
       (org-export-string org 'html org-ehtml-docroot))))
-
-(defun org-ehtml-update-file (path beg end new) ;; TODO: sub-folders
-  (org-babel-with-temp-filebuffer (expand-file-name path org-ehtml-docroot)
-    (let ((orig (buffer-string)))
-      (replace-region beg end new)
-      (if (run-hook-with-args-until-failure 'org-ehtml-before-save-hook)
-          (save-buffer)
-        (replace-region (point-min) (point-max) orig)
-        (error "edit rejected by `org-ehtml-before-save-hook'.")))
-    (run-hooks 'org-ehtml-after-save-hook)))
 
 (provide 'org-ehtml-server)
 ;;; org-ehtml-server.el ends here

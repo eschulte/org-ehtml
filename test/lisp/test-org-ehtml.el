@@ -50,8 +50,7 @@
 (defmacro test-org-ehtml-with (file html-var &rest body)
   (declare (indent 2))
   `(let ((org-ehtml-docroot test-org-ehtml-example-dir))
-     (elnode-start 'org-ehtml-server-dispatcher-handler
-                   :port test-org-ehtml-port)
+     (elnode-start 'org-ehtml-handler :port test-org-ehtml-port)
      (unwind-protect
          (let ((,html-var (test-org-ehtml-url-to-string ,file)))
            ,@body)
