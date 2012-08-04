@@ -28,25 +28,33 @@
 
 (defun org-ehtml-auth-handler (httpcon)
   (elnode-log-access "org-ehtml" httpcon)
-  (if (string= (elnode-http-pathinfo httpcon) "/login/")
-      (org-ehtml-auth-login httpcon)
+  (cond
+   ;; Index listing
+   ((string= (elnode-http-pathinfo httpcon) "/")
+    (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
+    (elnode-http-return httpcon
+      (elnode--webserver-index nil org-ehtml-docroot "")))
+   ;; Login handling
+   ((string= (elnode-http-pathinfo httpcon) "/login/")
     (elnode-method httpcon
-      (GET  (org-ehtml-file-handler httpcon))
-      (POST
-       (elnode-with-auth httpcon 'org-ehtml
-         (org-ehtml-edit-handler httpcon))))))
+      (GET  (elnode-auth-login-sender httpcon
+              "/login/" (or (cdr (assoc "to" (elnode-http-params httpcon)))
+                            "/")))
+      (POST (let* ((params (elnode-http-params httpcon))
+                   (password (cdr (assoc "password" params)))
+                   (username (cdr (assoc "username" params)))
+                   (redirect (cdr (assoc "redirect" params))))
+              (elnode-auth-http-login httpcon username password redirect)))))
+   ;; Regular file viewing and editing
+   (t (elnode-method httpcon
+        (GET  (org-ehtml-file-handler httpcon))
+        (POST (condition-case token
+                  (progn
+                    (elnode-auth-cookie-check-p httpcon)
+                    (org-ehtml-edit-handler httpcon))
+                (elnode-auth-token ;; Authenticate
+                 (elnode-http-start httpcon 401)
+                 (elnode-http-return httpcon))))))))
 
 (elnode-auth-define-scheme 'org-ehtml
  :redirect (elnode-auth-make-login-wrapper 'org-ehtml-auth-handler))
-
-(defun org-ehtml-auth-login (httpcon)
-  (elnode-method httpcon
-    (GET  (org-ehtml-request-login httpcon))
-    (POST (org-ehtml-process-login httpcon))))
-
-(defun org-ehtml-request-login (httpcon)
-  (elnode-http-start httpcon "200" '("Content-type" . "text/html"))
-  (elnode-http-return httpcon "<html><body>Login:</body></html>"))
-
-(defun org-ehtml-process-login (httpcon)
-  (error "`org-ehtml-process-login' is not implemented"))

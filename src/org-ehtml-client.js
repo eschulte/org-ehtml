@@ -30,20 +30,28 @@ function set_clickable(){
 };
 
 function save_changes(obj, org, beg, end){
-  $.post("/",
-         {org: org,
-          beg: beg,
-          end: end,
-          path: window.location.pathname},
-         function(html){ // replace the html and the raw org
-           $(obj).parent().parent().next().after(
-             '<div class="edit_in_place">'+html+'</div>'+
-               '<div class="raw-org" contents-begin="'+beg+
-               '" contents-end="'+(org.length+Number(beg))+'">'+org+'</div>');
-           $(obj).parent().parent().next().remove();
-           $(obj).parent().parent().remove();
-           set_clickable();
-         });
+  var here = window.location.pathname;
+  $.ajax({
+    type: 'POST',
+    url: here,
+    data: {org:  org,
+           beg:  beg,
+           end:  end,
+           path: here},
+    statusCode: {
+      200: function(html,status){
+        $(obj).parent().parent().next().after(
+          '<div class="edit_in_place">'+html+'</div>'+
+            '<div class="raw-org" contents-begin="'+beg+
+            '" contents-end="'+(org.length+Number(beg))+'">'+org+'</div>');
+        $(obj).parent().parent().next().remove();
+        $(obj).parent().parent().remove();
+        set_clickable();
+      },
+      401: function(){ window.location.replace("/login/?to="+here); },
+      500: function(error){ alert('error:'+error); }
+    }
+  });
 };
 
 function abort_changes(obj, old_html){

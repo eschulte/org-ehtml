@@ -27,7 +27,8 @@
 (require 'elnode)
 (require 'org-ehtml-client)
 
-(defvar org-ehtml-docroot "~/org-web"
+(defvar org-ehtml-docroot
+  (expand-file-name "public_org" elnode-config-directory)
   "Document root from which to serve Org-mode files.")
 
 (defvar org-ehtml-before-save-hook nil
