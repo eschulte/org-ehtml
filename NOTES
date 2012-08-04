@@ -16,3 +16,14 @@
 : ...
 : 15:35 < nicferrier> _schulte_: if you're gonna do this you might also be interested in my
 :                     phantomjs stuff - let's you test elnode apps in a headless browser.
+
+* authentication with elnode
+#+begin_quote nicferrier
+I have the code in a branch on github. There is an example of doing
+authentication here:
+
+https://github.com/nicferrier/elnode/blob/auth/elnode-wiki.el#L240
+
+that shows how to set up a declared authentication scheme which can then
+be used to protect bits of code.
+#+end_quote
