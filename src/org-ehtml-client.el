@@ -79,7 +79,6 @@
               (org-text  (or (org-element-interpret-data element)
                              original-contents
                              (error "no org-text found for %s" (car element)))))
-         (push info my-info)
          (if (or org-ehtml-everything-editable
                  (org-ehtml-client-editable-p element info))
              (org-fill-template org-ehtml-client-wrap-template
