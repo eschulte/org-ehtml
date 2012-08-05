@@ -25,7 +25,6 @@
 
 ;;; Code:
 (require 'ert)
-(require 'org-test)
 (require 'org-ehtml-client)
 (require 'org-ehtml-server)
 
@@ -63,9 +62,10 @@
   (flet ((has (it)
               (goto-char (point-min))
               (should (re-search-forward (regexp-quote it) nil t))))
-    (let ((html-file (org-test-with-temp-text-in-file
-                         (file-contents test-org-ehtml-simple-file)
-                       (org-ehtml-client-export-to-html))))
+    (let ((html-file (save-excursion
+                       (find-file test-org-ehtml-simple-file)
+                       (prog1 (org-ehtml-client-export-to-html)
+                         (kill-buffer)))))
       (while-visiting-file html-file
         ;; should include the ehtml css header
         (has ".editable")
