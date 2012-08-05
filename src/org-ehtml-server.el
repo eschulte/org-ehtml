@@ -47,12 +47,12 @@ If any function in this hook returns nil then the edit is aborted.")
 (defun org-ehtml-file-handler (httpcon)
   (elnode-docroot-for org-ehtml-docroot :with file :on httpcon :do
     (if (file-directory-p file)
-        (progn
+        (let ((pt (elnode-http-pathinfo httpcon)))
           (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
-          (elnode-http-return httpcon (elnode--webserver-index nil file "")))
+          (elnode-http-return httpcon
+            (elnode--webserver-index org-ehtml-docroot file pt)))
       (elnode-send-file httpcon (if (string= "org" (file-name-extension file))
-                                    (org-ehtml-client-export-file file)
-                                  file)))))
+                                    (org-ehtml-client-export-file file) file)))))
 
 (defun org-ehtml-edit-handler (httpcon)
   (let* ((params (elnode-http-params httpcon))
