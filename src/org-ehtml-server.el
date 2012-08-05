@@ -51,7 +51,6 @@ and the edit is reverted.")
         (progn
           (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
           (elnode-http-return httpcon (elnode--webserver-index nil file "")))
-        (org-ehtml-dir-listing httpcon file)
       (elnode-send-file httpcon (org-ehtml-client-export-file file)))))
 
 (defun org-ehtml-edit-handler (httpcon)
