@@ -1,5 +1,8 @@
 #                                                          -*- org -*-
 
+* TODO offer to add new files when they don't exist
+This would require another case in the `org-ehtml-file-handler'.
+
 * suggestions on testing from nicferrier
 : 15:29 < nicferrier> _schulte_:
 :                     https://github.com/nicferrier/elnode/blob/master/elnode-client.el#L534
