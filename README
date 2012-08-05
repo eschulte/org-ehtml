@@ -1,17 +1,20 @@
 Export Org-mode files as editable web pages                -*- org -*-
 
-org-ehtml serves Org-mode files as editable web pages using an elnode
-Emacs web server for server-side processing and Javascript for
-interaction through the browser.
+* Instillation and Configuration Instructions
 
-Follow these steps to try this out locally.  Note that you will need a
-very recent version of elnode in your load path.  Elnode can be
-obtained from http://nicferrier.github.com/elnode/.
+You will need Emacs 24 or later, and recent versions of elnode and
+Org-mode which are available from their respective repositories at
+http://nicferrier.github.com/elnode/ and
+http://orgmode.org/org-mode-download.html.
 
 1. Load the required libraries.
    #+begin_src emacs-lisp
-     (require 'org-ehtml-client)
-     (require 'org-ehtml-server)
+     (mapc (lambda (path) (add-to-list 'load-path path))
+           '("path/to/elnode"
+             "path/to/org-mode/lisp"
+             "path/to/org-mode/contrib/lisp"
+             "path/to/org-ehtml/src"
+             "path/to/org-ehtml/test/lisp"))
      (require 'test-org-ehtml)
    #+end_src
 
@@ -29,9 +32,15 @@ obtained from http://nicferrier.github.com/elnode/.
 
 4. Start up elnode.
    #+begin_src emacs-lisp
-     (elnode-start 'org-ehtml-server-dispatcher-handler)
+     (elnode-start 'org-ehtml-handler)
    #+end_src
 
 5. Point your browser to http://localhost:8000/simple.org and move
    your mouse over the page.  Editable portions of the page will be
    highlighted, click on these to edit.
+
+* User Authentication
+
+To enable user authentication, first checkout the auth branch of
+elnode, and then replace the 'org-ehtml-handler elnode handler with
+the 'org-ehtml-auth-handler defined in src/org-ehtml-auth.el.
