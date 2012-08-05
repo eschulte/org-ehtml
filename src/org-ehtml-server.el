@@ -33,8 +33,7 @@
 
 (defvar org-ehtml-before-save-hook nil
   "Hook run in a file buffer before saving web edits.
-If any function in this hook returns nil then the save is aborted
-and the edit is reverted.")
+If any function in this hook returns nil then the edit is aborted.")
 
 (defvar org-ehtml-after-save-hook nil
   "Hook run in a file buffer after saving web edits.")
@@ -51,7 +50,9 @@ and the edit is reverted.")
         (progn
           (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
           (elnode-http-return httpcon (elnode--webserver-index nil file "")))
-      (elnode-send-file httpcon (org-ehtml-client-export-file file)))))
+      (elnode-send-file httpcon (if (string= "org" (file-name-extension file))
+                                    (org-ehtml-client-export-file file)
+                                  file)))))
 
 (defun org-ehtml-edit-handler (httpcon)
   (let* ((params (elnode-http-params httpcon))
