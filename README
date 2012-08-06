@@ -47,17 +47,17 @@ http://orgmode.org/org-mode-download.html.
 
 #+begin_src emacs-lisp
   (require 'org-ehtml-server)
-  
+
   ;; Configure the server
   (setq
    org-ehtml-everything-editable t
    org-ehtml-docroot "~/path/to/your/files"
    my-org-ehtml-port 3333
    )
-  
+
   ;; Start the server
   (elnode-start 'org-ehtml-handler :port my-org-ehtml-port)
-  
+
   ;; Stop the server
   ;; (elnode-stop my-org-ehtml-port)
 #+end_src
@@ -67,3 +67,21 @@ http://orgmode.org/org-mode-download.html.
 To enable user authentication, first checkout the auth branch of
 elnode, and then replace the 'org-ehtml-handler elnode handler with
 the 'org-ehtml-auth-handler defined in src/org-ehtml-auth.el.
+
+* Integration with version control
+
+*Warning*: This could screw up your version control system as well as
+           your flat files.
+
+org-ehtml provides an org-ehtml-after-save-hook which can be used to
+commit all changes to a local version control system.
+
+#+begin_src emacs-lisp
+  (require 'vc)
+  
+  (add-hook
+   'org-ehtml-after-save-hook
+   (lambda ()
+     (let ((file (buffer-file-name (current-buffer))))
+       (vc-checkin (list file) (vc-backend file) nil "edit through org-ehtml"))))
+#+end_src
