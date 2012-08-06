@@ -32,10 +32,10 @@ http://orgmode.org/org-mode-download.html.
 
 4. Start up elnode.
    #+begin_src emacs-lisp
-     (elnode-start 'org-ehtml-handler)
+     (elnode-start 'org-ehtml-handler :port 8888)
    #+end_src
 
-5. Point your browser to http://localhost:8000/simple.org and move
+5. Point your browser to http://localhost:8888/simple.org and move
    your mouse over the page.  Editable portions of the page will be
    highlighted, click on these to edit.
 
