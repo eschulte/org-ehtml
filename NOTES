@@ -14,7 +14,7 @@ specialized function for exporting code blocks to editable html.
 When code blocks have a :session, how difficult would it be to add
 functionality like the python web notebook interface.
 
-* TODO replace on-click edit with side edit button
+* DONE replace on-click edit with side edit button
 This will be much nicer for html elements that require clicks, like
 links in an editable paragraph.
 

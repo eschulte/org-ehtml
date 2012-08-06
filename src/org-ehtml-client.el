@@ -56,16 +56,23 @@
 (defvar org-ehtml-everything-editable nil
   "Set to a true value to everything exported by org-ehtml editable.")
 
+(defvar org-ehtml-editable-types
+  '(paragraph plain-list table verbatim quote-block verse-block)
+  "Types of elements whose children should not be editable.")
+
 (defun org-ehtml-client-editable-p (element info)
   (let ((parent (org-export-get-parent element)))
     (cond ((eq (car parent) 'headline)
-           (member "EDITABLE" (org-export-get-tags parent info)))
+           (or org-ehtml-everything-editable
+               (member "EDITABLE" (org-export-get-tags parent info))))
           ((eq (car parent) 'org-data)
-           (member "EDITABLE"
-                   (mapcar (lambda (it) (plist-get (cadr it) :key))
-                           (remove-if-not (lambda (it) (equal 'keyword (car it)))
-                                          (cdaddr parent)))))
-          ((member (car parent) '(paragraph plain-list)) nil)
+           (or org-ehtml-everything-editable
+               (member "EDITABLE"
+                       (mapcar (lambda (it) (plist-get (cadr it) :key))
+                               (remove-if-not (lambda (it)
+                                                (equal 'keyword (car it)))
+                                              (cdaddr parent))))))
+          ((member (car parent) org-ehtml-editable-types) nil)
           (t (org-ehtml-client-editable-p parent info)))))
 
 (defmacro def-ehtml-wrap (e-html-function)
@@ -80,8 +87,7 @@
               (org-text  (or (org-element-interpret-data element)
                              original-contents
                              (error "no org-text found for %s" (car element)))))
-         (if (or org-ehtml-everything-editable
-                 (org-ehtml-client-editable-p element info))
+         (if (org-ehtml-client-editable-p element info)
              (org-fill-template org-ehtml-client-wrap-template
               `(("html-text" . ,html-text)
                 ("org-text"  . ,org-text)

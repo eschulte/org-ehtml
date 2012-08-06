@@ -5,28 +5,34 @@
 $(document).ready( function(){ set_clickable(); } );
 
 function set_clickable(){
-  // to every element with class="edit_in_place"
-  $('.edit_in_place').click(function(){
-    var org  = $(this).next().html();
-    var beg  = $(this).next().attr("contents-begin");
-    var end  = $(this).next().attr("contents-end");
-    var html = $(this).html();
-    $(this).after(
+  // add edit button to every element with class="edit_in_place"
+  $('.edit_button').remove();
+  $('.edit_in_place')
+    .before('<input type="button" value="EDIT" class="edit_button">');
+  $('.edit_button').click(function(){
+    var main = $(this).next()
+    var org  = main.next().html();
+    var beg  = main.next().attr("contents-begin");
+    var end  = main.next().attr("contents-end");
+    var html = main.html();
+    main.after(
       '<div><textarea rows="10" cols="80">'+org+'</textarea><div>'+
         '<input type="button" value="SAVE" class="save_button" />'+
         '<input type="button" value="CANCEL" class="cancel_button" />'+
         '</div></div>');
     // remove the orignal html
-    $(this).remove();
+    $(this).remove(); main.remove();
     // call these functions when buttons are hit
     $('.save_button').click(function(){
       save_changes(this, $(this).parent().prev().val(), beg, end);
     });
     $('.cancel_button').click(function(){ abort_changes(this, html); });
   });
-  // make every div with class="edit_in_place" highlight on mouseover
-  $('.edit_in_place').mouseover(function(){ $(this).addClass("editable"); });
-  $('.edit_in_place').mouseout(function() { $(this).removeClass("editable"); });
+  // TODO: show edit button on mousover
+  $('.edit_in_place').hover(function(){ $(this).prev().show(); },
+                            function(){ $(this).prev().hide(); } );
+  $('.edit_button').hover(function(){ $(this).show(); },
+                          function(){ $(this).hide(); } );
 };
 
 function save_changes(obj, org, beg, end){
