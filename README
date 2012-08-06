@@ -20,7 +20,7 @@ http://orgmode.org/org-mode-download.html.
 
 2. Run the tests to make sure everything is working.
    #+begin_src emacs-lisp
-     (ert 'org-ethml)
+     (ert "org-ehtml")
    #+end_src
 
 3. Set the root of your directory of Org-mode files.  For now we'll
