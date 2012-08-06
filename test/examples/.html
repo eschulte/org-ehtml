@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+<head>
+<title>examples</title>
+
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="title" content="examples"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content=""/>
+<meta name="author" content="Eric Schulte"/>
+<meta name="description" content="nil"/>
+<meta name="keywords" content="nil"/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style><style type="text/css">
+<!--/*--><![CDATA[/*><!--*/
+/* highlight editable secitons on mouseover */
+.editable{ background: lightyellow; }
+
+/* hide Org-mode text from display */
+.raw-org{ display: none; }
+/*]]>*/-->
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script><script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+// Copyright (C) 2012 Eric Schulte <eric.schulte@gmx.com>
+// License GPLV3
+
+// after the page loads, run the set set_clickable function
+$(document).ready( function(){ set_clickable(); } );
+
+function set_clickable(){
+  // to every element with class="edit_in_place"
+  $('.edit_in_place').click(function(){
+    var org  = $(this).next().html();
+    var beg  = $(this).next().attr("contents-begin");
+    var end  = $(this).next().attr("contents-end");
+    var html = $(this).html();
+    $(this).after(
+      '<div><textarea rows="10" cols="80">'+org+'</textarea><div>'+
+        '<input type="button" value="SAVE" class="save_button" />'+
+        '<input type="button" value="CANCEL" class="cancel_button" />'+
+        '</div></div>');
+    // remove the orignal html
+    $(this).remove();
+    // call these functions when buttons are hit
+    $('.save_button').click(function(){
+      save_changes(this, $(this).parent().prev().val(), beg, end);
+    });
+    $('.cancel_button').click(function(){ abort_changes(this, html); });
+  });
+  // make every div with class="edit_in_place" highlight on mouseover
+  $('.edit_in_place').mouseover(function(){ $(this).addClass("editable"); });
+  $('.edit_in_place').mouseout(function() { $(this).removeClass("editable"); });
+};
+
+function save_changes(obj, org, beg, end){
+  var here = window.location.pathname;
+  $.ajax({
+    type: 'POST',
+    url: here,
+    data: {org:  org,
+           beg:  beg,
+           end:  end,
+           path: here},
+    statusCode: {
+      200: function(html,status){
+        $(obj).parent().parent().next().after(
+          '<div class="edit_in_place">'+html+'</div>'+
+            '<div class="raw-org" contents-begin="'+beg+
+            '" contents-end="'+(org.length+Number(beg))+'">'+org+'</div>');
+        $(obj).parent().parent().next().remove();
+        $(obj).parent().parent().remove();
+        set_clickable();
+      },
+      401: function(){ window.location.replace("/login/?to="+here); },
+      500: function(error){ alert('error:'+error); }
+    }
+  });
+};
+
+function abort_changes(obj, old_html){
+  $(obj).parent().parent().after(
+    '<div class="edit_in_place">'+old_html+'</div>');
+  $(obj).parent().parent().remove();
+  set_clickable();
+};
+/*]]>*///-->
+</script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">examples</h1>
+<p>
+<i>home/eschulte</i>.emacs.d/src/org-ehtml/test/examples:
+total used in directory 56 available 42687204
+drwxr-xr-x 2 eschulte users  4096 Aug  4 15:51 .
+drwxr-xr-x 4 eschulte users  4096 Jul 13 11:30 ..
+-rw-r&ndash;r&ndash; 1 eschulte users  7511 Aug  4 13:36 all-editable.html
+-rw-r&ndash;r&ndash; 1 eschulte users   460 Aug  3 12:13 all-editable.org
+-rw-r&ndash;r&ndash; 1 eschulte users 11223 Aug  4 13:36 complex.html
+-rw-r&ndash;r&ndash; 1 eschulte users  2011 Aug  3 12:17 complex.org
+-rw-r&ndash;r&ndash; 1 eschulte users  7021 Aug  3 10:26 nothing.html
+-rw-r&ndash;r&ndash; 1 eschulte users  8057 Aug  4 15:51 simple.html
+-rw-r&ndash;r&ndash; 1 eschulte users   596 Aug  4 13:20 simple.org
+</p>
+
+</div>
+<div id="postamble">
+<p class="date"> Date:  </p> 
+<p class="author"> Author : Eric Schulte</p>
+<p class="creator"> Generated by Org mode 7.8.11 in Emacs 24.1.50.1. </p><a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

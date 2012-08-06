@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Export Org-mode files as editable web pages                -*- org -*-</title>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="title" content="Export Org-mode files as editable web pages"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-08-06T17:49-0600"/>
+<meta name="author" content="Eric Schulte"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  p.verse { margin-left: 3% }
+  pre {
+    color: #eeeeec;
+    background: #2e3436;
+    border: 1pt solid #AEBDCC;
+    padding: 5pt;
+    font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Export Org-mode files as editable web pages</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Installation and Configuration Instructions</a></li>
+<li><a href="#sec-2">2 Run over your own local Org-mode files</a></li>
+<li><a href="#sec-3">3 User Authentication</a></li>
+<li><a href="#sec-4">4 Integration with version control</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Installation and Configuration Instructions</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+You will need Emacs 24 or later, and recent versions of elnode and
+Org-mode which are available from their respective repositories at
+<a href="http://nicferrier.github.com/elnode/">http://nicferrier.github.com/elnode/</a> and
+<a href="http://orgmode.org/org-mode-download.html">http://orgmode.org/org-mode-download.html</a>.
+</p>
+<ol>
+<li>Load the required libraries.
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>mapc <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">lambda</span> <span style="color: #7f7f7f;">(</span>path<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>add-to-list 'load-path path<span style="color: #7f7f7f;">))</span>
+      '<span style="color: #7f7f7f;">(</span><span style="color: #e9b96e;">"path/to/elnode"</span>
+        <span style="color: #e9b96e;">"path/to/org-mode/lisp"</span>
+        <span style="color: #e9b96e;">"path/to/org-mode/contrib/lisp"</span>
+        <span style="color: #e9b96e;">"path/to/org-ehtml/src"</span>
+        <span style="color: #e9b96e;">"path/to/org-ehtml/test/lisp"</span><span style="color: #7f7f7f;">))</span>
+<span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">test-org-ehtml</span><span style="color: #7f7f7f;">)</span>
+</pre>
+
+
+</li>
+<li>Run the tests to make sure everything is working.
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>ert <span style="color: #e9b96e;">"org-ehtml"</span><span style="color: #7f7f7f;">)</span>
+</pre>
+
+
+</li>
+<li>Set the root of your directory of Org-mode files.  For now we'll
+   just use the example files used in the tests, later you can
+   customize this variable.
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>setq org-ehtml-docroot test-org-ehtml-example-dir<span style="color: #7f7f7f;">)</span>
+</pre>
+
+
+</li>
+<li>Start up elnode.
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>elnode-start 'org-ehtml-handler <span style="color: #ad7fa8;">:port</span> 8888<span style="color: #7f7f7f;">)</span>
+</pre>
+
+
+</li>
+<li>Point your browser to <a href="http://localhost:8888/simple.org">http://localhost:8888/simple.org</a> and move
+   your mouse over the page.  Editable portions of the page will be
+   highlighted, click on these to edit.
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Run over your own local Org-mode files</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+<b>Warning</b>: Be sure you backup your files before you start editing them
+           through this experimental web interface as it could trash
+           your files.
+</p>
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">org-ehtml-server</span><span style="color: #7f7f7f;">)</span>
+
+<span style="color: #73d216;">;; </span><span style="color: #73d216;">Configure the server</span>
+<span style="color: #7f7f7f;">(</span>setq
+ org-ehtml-everything-editable t
+ org-ehtml-docroot <span style="color: #e9b96e;">"~/path/to/your/files"</span>
+ my-org-ehtml-port 3333
+ <span style="color: #7f7f7f;">)</span>
+
+<span style="color: #73d216;">;; </span><span style="color: #73d216;">Start the server</span>
+<span style="color: #7f7f7f;">(</span>elnode-start 'org-ehtml-handler <span style="color: #ad7fa8;">:port</span> my-org-ehtml-port<span style="color: #7f7f7f;">)</span>
+
+<span style="color: #73d216;">;; </span><span style="color: #73d216;">Stop the server</span>
+<span style="color: #73d216;">;; </span><span style="color: #73d216;">(elnode-stop my-org-ehtml-port)</span>
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> User Authentication</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+To enable user authentication, first checkout the auth branch of
+elnode, and then replace the 'org-ehtml-handler elnode handler with
+the 'org-ehtml-auth-handler defined in src/org-ehtml-auth.el.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Integration with version control</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+<b>Warning</b>: This could screw up your version control system as well as
+           your flat files.
+</p>
+<p>
+org-ehtml provides an org-ehtml-after-save-hook which can be used to
+commit all changes to a local version control system.
+</p>
+
+
+
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">vc</span><span style="color: #7f7f7f;">)</span>
+
+<span style="color: #7f7f7f;">(</span>add-hook
+ 'org-ehtml-after-save-hook
+ <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">lambda</span> <span style="color: #7f7f7f;">()</span>
+   <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">let</span> <span style="color: #7f7f7f;">((</span>file <span style="color: #7f7f7f;">(</span>buffer-file-name <span style="color: #7f7f7f;">(</span>current-buffer<span style="color: #7f7f7f;">))))</span>
+     <span style="color: #7f7f7f;">(</span>vc-checkin <span style="color: #7f7f7f;">(</span>list file<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>vc-backend file<span style="color: #7f7f7f;">)</span> nil <span style="color: #e9b96e;">"edit through org-ehtml"</span><span style="color: #7f7f7f;">))))</span>
+</pre>
+
+</div>
+</div>
+</div>
+
+</body>
+</html>
