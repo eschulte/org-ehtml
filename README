@@ -1,6 +1,6 @@
 Export Org-mode files as editable web pages                -*- org -*-
 
-* Instillation and Configuration Instructions
+* Installation and Configuration Instructions
 
 You will need Emacs 24 or later, and recent versions of elnode and
 Org-mode which are available from their respective repositories at
