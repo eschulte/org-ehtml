@@ -68,7 +68,7 @@
                          (kill-buffer)))))
       (while-visiting-file html-file
         ;; should include the ehtml css header
-        (has ".editable")
+        (has ".edit_button")
         ;; should include the ehtml javascript header
         (has "set_clickable()")
         ;; the paragraph should be editable
@@ -85,15 +85,15 @@
 
 
 ;;; server tests
-(ert-deftest org-ethml-elnode-serve-simple ()
+(ert-deftest org-ehtml-elnode-serve-simple ()
   (test-org-ehtml-with "simple.org" html
     (should (string-match "lorem" html))))
 
-(ert-deftest org-ethml-elnode-serve-complex ()
+(ert-deftest org-ehtml-elnode-serve-complex ()
   (test-org-ehtml-with "complex.org" html
     (should (string-match "lorem" html))))
 
-(ert-deftest org-ethml-elnode-serve-all-editable ()
+(ert-deftest org-ehtml-elnode-serve-all-editable ()
   (test-org-ehtml-with "all-editable.org" html
     (should (string-match "edit_in_place" html))))
 
