@@ -39,6 +39,29 @@ http://orgmode.org/org-mode-download.html.
    your mouse over the page.  Editable portions of the page will be
    highlighted, click on these to edit.
 
+* Run over your own local Org-mode files
+
+*Warning*: Be sure you backup your files before you start editing them
+           through this experimental web interface as it could trash
+           your files.
+
+#+begin_src emacs-lisp
+  (require 'org-ehtml-server)
+  
+  ;; Configure the server
+  (setq
+   org-ehtml-everything-editable t
+   org-ehtml-docroot "~/path/to/your/files"
+   my-org-ehtml-port 3333
+   )
+  
+  ;; Start the server
+  (elnode-start 'org-ehtml-handler :port my-org-ehtml-port)
+  
+  ;; Stop the server
+  ;; (elnode-stop my-org-ehtml-port)
+#+end_src
+
 * User Authentication
 
 To enable user authentication, first checkout the auth branch of
