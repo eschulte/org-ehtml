@@ -1,5 +1,23 @@
 #                                                          -*- org -*-
 
+* TODO AJAX offset cleanup
+After every edit, we will need to map through every element in the
+html document changing the contents-[begin|end] which are larger than
+the contents-end of the edited element to reflect the new offset.
+
+* TODO specialized editable html export for source code blocks
+Rather than using [[file:src/org-ehtml-client.el::%3B%3B%20(src-block%20.%20,(def-ehtml-wrap%20org-e-html-src-block))][(def-ehtml-wrap org-e-html-src-block)]], write a
+specialized function for exporting code blocks to editable html.
+- should have an [execute] button
+
+** something special for "notebook" functionality with sessions?
+When code blocks have a :session, how difficult would it be to add
+functionality like the python web notebook interface.
+
+* TODO replace on-click edit with side edit button
+This will be much nicer for html elements that require clicks, like
+links in an editable paragraph.
+
 * TODO offer to add new files when they don't exist
 This would require another case in the `org-ehtml-file-handler'.
 
