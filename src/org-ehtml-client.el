@@ -125,5 +125,19 @@
     (find-file file)
     (org-ehtml-client-export-to-html)))
 
+(defun org-ehtml-client-cached (file)
+  "Export FILE to editable HTML if no previous export exists.
+If a previous HTML export of FILE exists but is older than FILE
+re-export."
+  (cl-flet ((age (f)
+                 (float-time
+                  (time-subtract (current-time)
+                                 (nth 5 (or (file-attributes (file-truename f))
+                                            (file-attributes f)))))))
+    (let ((html-file (concat (file-name-sans-extension file) ".html")))
+      (if (or (not (file-exists-p html-file)) (> (age html-file) (age file)))
+          (org-ehtml-client-export-file file)
+        html-file))))
+
 (provide 'org-ehtml-client)
 ;;; org-ehtml-client.el ends here

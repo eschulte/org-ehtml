@@ -1,5 +1,6 @@
 #                                                          -*- org -*-
 
+* DONE don't re-export if the html is newer than the org
 * TODO AJAX offset cleanup
 After every edit, we will need to map through every element in the
 html document changing the contents-[begin|end] which are larger than
