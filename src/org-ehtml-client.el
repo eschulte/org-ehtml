@@ -70,11 +70,14 @@
                (member "EDITABLE" (org-export-get-tags parent info))))
           ((eq (car parent) 'org-data)
            (or org-ehtml-everything-editable
-               (member "EDITABLE"
-                       (mapcar (lambda (it) (plist-get (cadr it) :key))
-                               (remove-if-not (lambda (it)
-                                                (equal 'keyword (car it)))
-                                              (cdaddr parent))))))
+               (cl-some
+                (lambda (keyword)
+                  (let ((key (plist-get (cadr keyword) :key))
+                        (val (plist-get (cadr keyword) :value)))
+                    (and (string= "PROPERTY" key)
+                         (string-match "editable \\(.+\\)" val)
+                         (car (read-from-string (match-string 1 val))))))
+                (cddr (caddr my-data)))))
           ((member (car parent) org-ehtml-editable-types) nil)
           (t (org-ehtml-client-editable-p parent info)))))
 
