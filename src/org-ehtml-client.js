@@ -49,9 +49,10 @@ function save_changes(obj, org, beg, end){
         $(obj).parent().parent().next().after(
           '<div class="edit_in_place">'+html+'</div>'+
             '<div class="raw-org" contents-begin="'+beg+
-            '" contents-end="'+(org.length+Number(beg))+'">'+org+'</div>');
+            '" contents-end="'+end+'">'+org+'</div>');
         $(obj).parent().parent().next().remove();
         $(obj).parent().parent().remove();
+        update_offsets(end, (org.length - (Number(end) - Number(beg))));
         set_clickable();
       },
       401: function(){ window.location.replace("/login/?to="+here); },
@@ -65,4 +66,13 @@ function abort_changes(obj, old_html){
     '<div class="edit_in_place">'+old_html+'</div>');
   $(obj).parent().parent().remove();
   set_clickable();
+};
+
+function update_offsets(end, delta){
+  $('.raw-org').map(function(){
+    var old_beg = Number($(this).attr('contents-begin'));
+    if(old_beg >= end) { $(this).attr('contents-begin', (old_beg + delta)); }
+    var old_end = Number($(this).attr('contents-end'));
+    if(old_end >= end) { $(this).attr('contents-end', (old_end + delta)); }
+  })
 };
