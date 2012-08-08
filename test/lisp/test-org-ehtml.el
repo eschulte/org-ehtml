@@ -41,14 +41,17 @@
 
 (defun test-org-ehtml-url-to-string (url)
   (async-shell-command (format "curl localhost:%s/%s" test-org-ehtml-port url))
-  (with-current-buffer "*Async Shell Command*"
-    (while (get-buffer-process (current-buffer)) (sit-for 0.1))
-    (goto-char (point-min))
-    (buffer-string)))
+  (unwind-protect
+      (with-current-buffer "*Async Shell Command*"
+        (while (get-buffer-process (current-buffer)) (sit-for 0.1))
+        (goto-char (point-min))
+        (buffer-string))
+    (kill-buffer "*Async Shell Command*")))
 
 (defmacro test-org-ehtml-with (file html-var &rest body)
   (declare (indent 2))
-  `(let ((org-ehtml-docroot test-org-ehtml-example-dir))
+  `(let ((org-ehtml-docroot test-org-ehtml-example-dir)
+         (elnode--do-error-logging nil))
      (elnode-start 'org-ehtml-handler :port test-org-ehtml-port)
      (unwind-protect
          (let ((,html-var (test-org-ehtml-url-to-string ,file)))
