@@ -39,12 +39,15 @@
 (defvar org-ehtml-client-jquery
   "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
 
-(defvar org-ehtml-client-scripts
+(defvar org-ehtml-client-js
+  (file-contents (expand-file-name "org-ehtml-client.js" org-ehtml-base)))
+
+(defun org-ehtml-client-scripts ()
   (concat
    "<script type=\"text/javascript\" src=\""
    org-ehtml-client-jquery "\"></script>"
    "<script type=\"text/javascript\">\n<!--/*--><![CDATA[/*><!--*/\n"
-   (file-contents (expand-file-name "org-ehtml-client.js" org-ehtml-base))
+   org-ehtml-client-js
    "/*]]>*///-->\n</script>\n"))
 
 (defvar org-ehtml-client-wrap-template
@@ -115,8 +118,10 @@
 	 (file (org-export-output-file-name extension subtreep pub-dir))
 	 (org-export-coding-system org-e-html-coding-system)
          ;; custom headers
-         (org-e-html-style-extra org-ehtml-client-style)
-         (org-e-html-scripts org-ehtml-client-scripts))
+         (org-e-html-style-extra (concat org-e-html-style-extra "\n"
+                                         org-ehtml-client-style))
+         (org-e-html-scripts (concat org-e-html-scripts "\n"
+                                     (org-ehtml-client-scripts))))
     (org-export-to-file 'ehtml file subtreep visible-only body-only ext-plist)))
 
 (defun org-ehtml-client-export-file (file)
