@@ -77,7 +77,7 @@
                     (and (string= "PROPERTY" key)
                          (string-match "editable \\(.+\\)" val)
                          (car (read-from-string (match-string 1 val))))))
-                (cddr (caddr my-data)))))
+                (cddr (caddr parent)))))
           ((member (car parent) org-ehtml-editable-types) nil)
           (t (org-ehtml-client-editable-p parent info)))))
 
@@ -142,10 +142,12 @@ re-export."
                   (time-subtract (current-time)
                                  (nth 5 (or (file-attributes (file-truename f))
                                             (file-attributes f)))))))
-    (let ((html-file (concat (file-name-sans-extension file) ".html")))
-      (if (or (not (file-exists-p html-file)) (> (age html-file) (age file)))
-          (org-ehtml-client-export-file file)
-        html-file))))
+    (let* ((base (file-name-sans-extension file))
+           (html (concat base ".html"))
+           (org (concat base ".org")))
+      (if (or (not (file-exists-p html)) (> (age html) (age org)))
+          (org-ehtml-client-export-file org)
+        html))))
 
 (provide 'org-ehtml-client)
 ;;; org-ehtml-client.el ends here
