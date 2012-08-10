@@ -1,5 +1,8 @@
 #                                                          -*- org -*-
 
+* TODO find good instructions for running behind a https proxy
+This would be required for secure use of elnode's authentication.
+
 * DONE don't re-export if the html is newer than the org
 * DONE AJAX offset cleanup
 After every edit, we will need to map through every element in the
