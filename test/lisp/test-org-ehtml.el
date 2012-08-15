@@ -39,8 +39,15 @@
 
 (defvar test-org-ehtml-port 8888)
 
-(defun test-org-ehtml-url-to-string (url)
-  (async-shell-command (format "curl localhost:%s/%s" test-org-ehtml-port url))
+(defun test-org-ehtml-url-to-string (url &optional params)
+  (async-shell-command
+   (format "curl %s localhost:%s/%s"
+           (if params
+               (format "-d %S"
+                       (mapconcat (lambda (p) (format "%s=%s" (car p) (cdr p)))
+                                  params "&"))
+             "")
+           test-org-ehtml-port url))
   (unwind-protect
       (with-current-buffer "*Async Shell Command*"
         (while (get-buffer-process (current-buffer)) (sit-for 0.1))
@@ -54,7 +61,8 @@
          (elnode--do-error-logging nil))
      (elnode-start 'org-ehtml-handler :port test-org-ehtml-port)
      (unwind-protect
-         (let ((,html-var (test-org-ehtml-url-to-string ,file)))
+         (let ((,html-var (test-org-ehtml-url-to-string
+                           ,(car file) ,(cdr file))))
            ,@body)
        (elnode-stop test-org-ehtml-port))))
 (def-edebug-spec test-org-ehtml-with (form form body))
@@ -89,16 +97,34 @@
 
 ;;; server tests
 (ert-deftest org-ehtml-elnode-serve-simple ()
-  (test-org-ehtml-with "simple.org" html
+  (test-org-ehtml-with ("simple.org") html
     (should (string-match "lorem" html))))
 
 (ert-deftest org-ehtml-elnode-serve-complex ()
-  (test-org-ehtml-with "complex.org" html
+  (test-org-ehtml-with ("complex.org") html
     (should (string-match "lorem" html))))
 
 (ert-deftest org-ehtml-elnode-serve-all-editable ()
-  (test-org-ehtml-with "all-editable.org" html
+  (test-org-ehtml-with ("all-editable.org") html
     (should (string-match "edit_in_place" html))))
+
+(ert-deftest org-ehtml-post-request ()
+  (let ((original (file-contents test-org-ehtml-simple-file))
+        (params '(("path" . "/simple.org")
+                  ("end"  . "577")
+                  ("beg"  . "156")
+                  ("org"  . "/foo/\n"))))
+    (unwind-protect
+        (test-org-ehtml-with ("simple.org" . params) html
+          ;; ensure that the html export of "/foo/" is returned
+          (should (string-match "<i>foo</i>" html))
+          ;; ensure that the file has been updated on disk
+          (should (while-visiting-file test-org-ehtml-simple-file
+                    (re-search-forward (regexp-quote "/foo/")))))
+      (org-babel-with-temp-filebuffer test-org-ehtml-simple-file
+        (delete-region (point-min) (point-max))
+        (insert original)
+        (save-buffer)))))
 
 (provide 'test-org-ehtml)
 ;;; test-org-ehtml.el ends here
