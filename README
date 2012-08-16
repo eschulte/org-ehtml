@@ -93,3 +93,11 @@ server.  To do so, set ORGMODE and ELNODE environment variables to
 point to the development directories of Org-mode and elnode.  You can
 then run "make" to build the Emacs Lisp source or run "make example"
 to launch an example web server.
+* Issues
+** Doesn't work with some versions of Chrome
+Specifically Version 21.0.1180.79 (151411) of chrome sends empty text
+fields to the server resulting in the deletion of the edited portion
+of the Org-mode file.
+
+This is due to Chrome's miss-evaluation of line 14 or so of
+src/org-ehtml-client.js.
