@@ -87,6 +87,11 @@
 <li><a href="#sec-3">3 User Authentication</a></li>
 <li><a href="#sec-4">4 Integration with version control</a></li>
 <li><a href="#sec-5">5 Using the Makefile</a></li>
+<li><a href="#sec-6">6 Issues</a>
+<ul>
+<li><a href="#sec-6-1">6.1 Doesn't work with some versions of Chrome</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -248,6 +253,29 @@ point to the development directories of Org-mode and elnode.  You can
 then run "make" to build the Emacs Lisp source or run "make example"
 to launch an example web server.
 </p></div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Issues</h2>
+<div class="outline-text-2" id="text-6">
+
+
+</div>
+
+<div id="outline-container-6-1" class="outline-3">
+<h3 id="sec-6-1"><span class="section-number-3">6.1</span> Doesn't work with some versions of Chrome</h3>
+<div class="outline-text-3" id="text-6-1">
+
+<p>Specifically Version 21.0.1180.79 (151411) of chrome sends empty text
+fields to the server resulting in the deletion of the edited portion
+of the Org-mode file.
+</p>
+<p>
+This is due to Chrome's miss-evaluation of line 14 or so of
+src/org-ehtml-client.js.
+</p></div>
+</div>
 </div>
 </div>
 
