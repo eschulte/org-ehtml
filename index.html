@@ -86,6 +86,7 @@
 <li><a href="#sec-2">2 Run over your own local Org-mode files</a></li>
 <li><a href="#sec-3">3 User Authentication</a></li>
 <li><a href="#sec-4">4 Integration with version control</a></li>
+<li><a href="#sec-5">5 Using the Makefile</a></li>
 </ul>
 </div>
 </div>
@@ -229,9 +230,33 @@ commit all changes to a local version control system.
      <span style="color: #7f7f7f;">(</span>vc-checkin <span style="color: #7f7f7f;">(</span>list file<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>vc-backend file<span style="color: #7f7f7f;">)</span> nil <span style="color: #e9b96e;">"edit through org-ehtml"</span><span style="color: #7f7f7f;">))))</span>
 </pre>
 
+
 </div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Using the Makefile</h2>
+<div class="outline-text-2" id="text-5">
+
+
+<p>
+Using the Makefile is not required in any way.  However, it may be
+used to either compile the Emacs Lisp source, or to run a simple web
+server.  To do so, set ORGMODE and ELNODE environment variables to
+point to the development directories of Org-mode and elnode.  You can
+then run "make" to build the Emacs Lisp source or run "make example"
+to launch an example web server.
+</p></div>
 </div>
 </div>
 
+<div id="postamble">
+<p class="date">Date: 2012-08-16T00:47-0600</p>
+<p class="author">Author: Eric Schulte</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.8.11 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
 </body>
 </html>
