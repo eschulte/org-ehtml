@@ -25,10 +25,13 @@
 
 ;;; Code:
 (require 'org)
+(require 'org-exp)
 (require 'org-export)
 (require 'org-element)
 (require 'org-e-html)
 (require 'org-ehtml-util)
+(require 'cl-lib)
+(eval-when-compile (require 'cl-macs))
 
 (defvar org-ehtml-client-style
   (concat

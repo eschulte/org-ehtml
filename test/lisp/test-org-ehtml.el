@@ -70,7 +70,7 @@
 
 ;;; Export tests
 (ert-deftest org-ehtml-simple-export ()
-  (flet ((has (it)
+  (cl-flet ((has (it)
               (goto-char (point-min))
               (should (re-search-forward (regexp-quote it) nil t))))
     (let ((html-file (save-excursion

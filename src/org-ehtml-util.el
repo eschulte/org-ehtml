@@ -28,7 +28,7 @@
   "Execute BODY in a temporary buffer visiting FILE."
   (declare (indent 1))
   `(with-temp-buffer
-     (insert-file ,file)
+     (insert-file-contents ,file)
      ,@body))
 (def-edebug-spec while-visiting-file (form body))
 
