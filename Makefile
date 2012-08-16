@@ -9,7 +9,7 @@ BATCH_EMACS=$(EMACS) --batch --execute '(mapc (lambda (dir) (add-to-list (quote 
         ,(expand-file-name "src" default-directory) \
         ,(expand-file-name "lisp" (expand-file-name "test" default-directory))))'
 
-.PHONY: all src test clean
+.PHONY: all src test clean example
 
 SRC=$(wildcard src/*.el)
 TEST=$(wildcard test/lisp/*.el)
@@ -21,6 +21,9 @@ src: $(SRC)
 
 test: $(TEST)
 	$(BATCH_EMACS) -f batch-byte-compile $^
+
+example: test/lisp/example.el
+	$(BATCH_EMACS) -l $^
 
 clean:
 	rm -f $(SRC:.el=.elc) $(TEST:.el=.elc)
