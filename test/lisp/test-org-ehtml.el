@@ -117,7 +117,7 @@
     (unwind-protect
         (test-org-ehtml-with ("simple.org" . params) html
           ;; ensure that the html export of "/foo/" is returned
-          (should (string-match "<i>foo</i>" html))
+          (should (string-match (regexp-quote ">foo</") html))
           ;; ensure that the file has been updated on disk
           (should (while-visiting-file test-org-ehtml-simple-file
                     (re-search-forward (regexp-quote "/foo/")))))
