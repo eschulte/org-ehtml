@@ -84,3 +84,12 @@ commit all changes to a local version control system.
      (let ((file (buffer-file-name (current-buffer))))
        (vc-checkin (list file) (vc-backend file) nil "edit through org-ehtml"))))
 #+end_src
+
+* Using the Makefile
+
+Using the Makefile is not required in any way.  However, it may be
+used to either compile the Emacs Lisp source, or to run a simple web
+server.  To do so, set ORGMODE and ELNODE environment variables to
+point to the development directories of Org-mode and elnode.  You can
+then run "make" to build the Emacs Lisp source or run "make example"
+to launch an example web server.

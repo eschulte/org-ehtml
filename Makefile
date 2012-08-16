@@ -1,4 +1,7 @@
 EMACS := emacs
+
+# Set these environment variables so that they point to the
+# development directories of Org-mode and elnode.
 ORGMODE ?= ~/path/to/org-mode/
 ELNODE  ?= ~/path/to/elnode/
 
