@@ -1,5 +1,12 @@
 #                                                          -*- org -*-
 
+* possibly more cl-* wrinkles as Emacs dev continues
+#+begin_quote Achim
+> Note that there's yet a new wrinkle with the upcoming release of the
+> 24.2 version (which hasn't made the change yet), so 24.1.50 and
+> 24.2.50 and later have new-style cl libraries...
+#+end_quote
+
 * TODO find good instructions for running behind a https proxy
 This would be required for secure use of elnode's authentication.
 
