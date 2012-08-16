@@ -24,6 +24,8 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
+(or (require 'cl-lib nil 'noerror) (require 'cl))
+
 (defmacro while-visiting-file (file &rest body)
   "Execute BODY in a temporary buffer visiting FILE."
   (declare (indent 1))
@@ -43,6 +45,10 @@
 
 (defvar org-ehtml-base
   (file-name-directory (or load-file-name (buffer-file-name))))
+
+;;; Common Lisp compatibility across Emacs Versions
+(when (fboundp 'cl-flet) (defalias 'flet 'cl-flet))
+(when (fboundp 'cl-some) (defalias 'some 'cl-some))
 
 (provide 'org-ehtml-util)
 ;;; org-ehtml-util.el ends here

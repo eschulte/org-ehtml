@@ -30,8 +30,6 @@
 (require 'org-element)
 (require 'org-e-html)
 (require 'org-ehtml-util)
-(require 'cl-lib)
-(eval-when-compile (require 'cl-macs))
 
 (defvar org-ehtml-client-style
   (concat
@@ -73,7 +71,7 @@
                (member "EDITABLE" (org-export-get-tags parent info))))
           ((eq (car parent) 'org-data)
            (or org-ehtml-everything-editable
-               (cl-some
+               (some
                 (lambda (keyword)
                   (let ((key (plist-get (cadr keyword) :key))
                         (val (plist-get (cadr keyword) :value)))
@@ -140,11 +138,11 @@
   "Export FILE to editable HTML if no previous export exists.
 If a previous HTML export of FILE exists but is older than FILE
 re-export."
-  (cl-flet ((age (f)
-                 (float-time
-                  (time-subtract (current-time)
-                                 (nth 5 (or (file-attributes (file-truename f))
-                                            (file-attributes f)))))))
+  (flet ((age (f)
+              (float-time
+               (time-subtract (current-time)
+                              (nth 5 (or (file-attributes (file-truename f))
+                                         (file-attributes f)))))))
     (let* ((base (file-name-sans-extension file))
            (html (concat base ".html"))
            (org (concat base ".org")))
