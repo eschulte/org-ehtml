@@ -25,8 +25,7 @@
 
 ;;; Code:
 (require 'ert)
-(require 'org-ehtml-client)
-(require 'org-ehtml-server)
+(require 'org-ehtml)
 
 (defvar test-org-ehtml-dir
   (file-name-directory (or load-file-name (buffer-file-name))))

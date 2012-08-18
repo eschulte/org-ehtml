@@ -50,3 +50,6 @@
 
 (elnode-auth-define-scheme 'org-ehtml
  :redirect (elnode-auth-make-login-wrapper 'org-ehtml-auth-handler))
+
+(provide 'org-ehtml-auth)
+;;; org-ehtml-auth ends here

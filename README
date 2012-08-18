@@ -46,7 +46,7 @@ http://orgmode.org/org-mode-download.html.
            your files.
 
 #+begin_src emacs-lisp
-  (require 'org-ehtml-server)
+  (require 'org-ehtml)
 
   ;; Configure the server
   (setq
