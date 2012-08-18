@@ -1,3 +1,6 @@
 **.html
 **.elc
 **~
+
+# ELPA packages
+org-ehtml-*.tar
