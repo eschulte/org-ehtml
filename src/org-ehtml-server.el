@@ -51,7 +51,8 @@ If any function in this hook returns nil then the edit is aborted.")
           (let ((pt (elnode-http-pathinfo httpcon)))
             (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
             (elnode-http-return httpcon
-              (elnode--webserver-index org-ehtml-docroot file pt)))
+              (elnode--webserver-index
+               org-ehtml-docroot file pt "^[^\.].*[^~]$")))
         (elnode-send-file httpcon
           (if (member (file-name-extension file) '("org" "html"))
               (org-ehtml-client-cached file) file))))))
