@@ -17,7 +17,7 @@ BATCH_EMACS=$(EMACS) --batch --execute \
 NAME=org-ehtml
 VERSION=0.$(shell date +%Y%m%d)
 DOC="Export Org-mode files as editable web pages"
-REQ=((elnode \"0.9.9\") (org \"20120814\"))
+REQ=((elnode \"0.9.9\") (org \"20120814\")) # <- needs org-export
 DEFPKG="(define-package \"$(NAME)\" \"$(VERSION)\" \n  \"$(DOC)\" \n  '$(REQ))"
 PACKAGE=$(NAME)-$(VERSION)
 
