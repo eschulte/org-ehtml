@@ -17,12 +17,13 @@
 ;;; Code:
 (require 'test-org-ehtml)
 
+(defvar org-ehtml-port 3333 "Port used to run this example server.")
+
 (setq
  debug-on-error t                 ;; show debug info for any errors
  org-e-html-postamble nil         ;; don't export a postamble
  elnode-error-log-to-messages nil ;; stifle unhelpful & noisy elnode warnings
- org-ehtml-docroot test-org-ehtml-example-dir
- org-ehtml-port 3333)
+ org-ehtml-docroot test-org-ehtml-example-dir)
 
 ;; stop the default org-ehtml server
 (elnode-stop 8000)
