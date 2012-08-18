@@ -34,12 +34,16 @@ src: $(SRC) $(TEST)
 example: test/lisp/example.el
 	$(BATCH_EMACS) -l $^
 
-package: $(SRC) src/org-ehtml-client.js src/org-ehtml-client.css
+$(PACKAGE).tar: $(SRC) src/org-ehtml-client.js src/org-ehtml-client.css
 	mkdir $(PACKAGE); \
 	cp $^ $(PACKAGE); \
+	$(BATCH_EMACS) README -f org-export-as-utf8; \
+	mv README.txt $(PACKAGE)/README; \
 	echo -e $(DEFPKG) > $(PACKAGE)/$(NAME)-pkg.el; \
 	tar cf $(PACKAGE).tar $(PACKAGE); \
 	rm -r $(PACKAGE)
+
+package: $(PACKAGE).tar
 
 clean:
 	rm -f $(SRC:.el=.elc) $(TEST:.el=.elc) $(NAME)-*.tar
