@@ -1,5 +1,11 @@
 #                                                          -*- org -*-
 
+* running through heroku
+- a single instance on heroku is free
+- nicferrier has forked technomancy's heroku elisp package
+
+Try to make it easy to run org-ehtml on heroku.
+
 * possibly more cl-* wrinkles as Emacs dev continues
 #+begin_quote Achim
 > Note that there's yet a new wrinkle with the upcoming release of the
