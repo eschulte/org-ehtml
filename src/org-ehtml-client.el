@@ -146,7 +146,8 @@ re-export."
     (let* ((base (file-name-sans-extension file))
            (html (concat base ".html"))
            (org (concat base ".org")))
-      (if (or (not (file-exists-p html)) (> (age html) (age org)))
+      (if (and (file-exists-p org)
+               (or (not (file-exists-p html)) (> (age html) (age org))))
           (org-ehtml-client-export-file org)
         html))))
 
