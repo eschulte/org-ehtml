@@ -38,6 +38,9 @@ If any function in this hook returns nil then the edit is aborted.")
 (defvar org-ehtml-after-save-hook nil
   "Hook run in a file buffer after saving web edits.")
 
+(defvar org-ehtml-dir-match "^\\([^\.].*[^~]\\|\\.\\.\\)$"
+  "Match string passed to `directory-files-and-attributes' for dir listing.")
+
 (defun org-ehtml-handler (httpcon)
   (elnode-log-access "org-ehtml" httpcon)
   (elnode-method httpcon
@@ -65,7 +68,8 @@ If any function in this hook returns nil then the edit is aborted.")
     (let ((pt (elnode-http-pathinfo httpcon)))
       (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
       (elnode-http-return httpcon
-        (elnode--webserver-index org-ehtml-docroot file pt "^[^\.].*[^~]$"))))
+        (elnode--webserver-index
+         org-ehtml-docroot file pt org-ehtml-dir-match))))
    ;; none of the above -> missing file
    (t (elnode-send-404 httpcon))))
 
