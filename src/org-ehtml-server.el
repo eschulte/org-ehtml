@@ -47,15 +47,27 @@ If any function in this hook returns nil then the edit is aborted.")
 (defun org-ehtml-file-handler (httpcon)
   (let ((elnode-docroot-for-no-404 t) (elnode-docroot-for-no-cache t))
     (elnode-docroot-for org-ehtml-docroot :with file :on httpcon :do
-      (if (file-directory-p file)
-          (let ((pt (elnode-http-pathinfo httpcon)))
-            (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
-            (elnode-http-return httpcon
-              (elnode--webserver-index
-               org-ehtml-docroot file pt "^[^\.].*[^~]$")))
-        (elnode-send-file httpcon
-          (if (member (file-name-extension file) '("org" "html"))
-              (org-ehtml-client-cached file) file))))))
+      (org-ehtml-serve-file file httpcon))))
+
+(defun org-ehtml-serve-file (file httpcon)
+  (cond
+   ;; normal files (including index.org or index.html if they exist)
+   ((or (not (file-directory-p file))
+        (let ((i-org  (expand-file-name "index.org" file))
+              (i-html (expand-file-name "index.html" file)))
+          (or (and (file-exists-p i-org)  (setq file i-org))
+              (and (file-exists-p i-html) (setq file i-html)))))
+    (elnode-send-file httpcon
+      (if (member (file-name-extension file) '("org" "html"))
+          (org-ehtml-client-cached file) file)))
+   ;; directory listing
+   ((file-directory-p file)
+    (let ((pt (elnode-http-pathinfo httpcon)))
+      (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
+      (elnode-http-return httpcon
+        (elnode--webserver-index org-ehtml-docroot file pt "^[^\.].*[^~]$"))))
+   ;; none of the above -> missing file
+   (t (elnode-send-404 httpcon))))
 
 (defun org-ehtml-edit-handler (httpcon)
   (let* ((params (elnode-http-params httpcon))
