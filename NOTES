@@ -1,5 +1,16 @@
 #                                                          -*- org -*-
 
+* TODO upload package to marmalade after Org 7.9 release
+- update the Org-mode dependency in the Makefile
+- upload to marmalade
+
+* would be good to allow the addition of new handlers
+and to include some default handlers in the repo, e.g.,
+- adding a new file when not present
+- adding a new heading
+- searching
+
+* TODO how to add a new headline
 * running through heroku
 - a single instance on heroku is free
 - nicferrier has forked technomancy's heroku elisp package
