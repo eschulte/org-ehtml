@@ -21,7 +21,7 @@ REQ=((elnode \"0.9.9\") (org \"20120814\")) # <- needs org-export
 DEFPKG="(define-package \"$(NAME)\" \"$(VERSION)\" \n  \"$(DOC)\" \n  '$(REQ))"
 PACKAGE=$(NAME)-$(VERSION)
 
-.PHONY: all src example package clean
+.PHONY: all src example package clean check test
 
 SRC=$(wildcard src/*.el)
 TEST=$(wildcard test/lisp/*.el)
@@ -33,6 +33,11 @@ src: $(SRC) $(TEST)
 
 example: test/lisp/example.el
 	$(BATCH_EMACS) -l $^
+
+check: $(SRC) $(TEST)
+	$(BATCH_EMACS) -l test/lisp/test-org-ehtml.el --eval '(ert t)'
+
+test: check
 
 $(PACKAGE).tar: $(SRC) src/org-ehtml-client.js src/org-ehtml-client.css
 	mkdir $(PACKAGE); \
