@@ -125,5 +125,9 @@
         (insert original)
         (save-buffer)))))
 
+(ert-deftest org-ehtml-elnode-serve-difficult-chars ()
+  (test-org-ehtml-with ("difficult-chars.org") html
+    (should (string-match "difficult characters" html))))
+
 (provide 'test-org-ehtml)
 ;;; test-org-ehtml.el ends here
