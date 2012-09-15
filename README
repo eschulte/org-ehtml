@@ -7,14 +7,12 @@ Org-mode which are available from their respective repositories at
 http://nicferrier.github.com/elnode/ and
 http://orgmode.org/org-mode-download.html.
 
-1. Load the required libraries.
+1. Install using ELPA from http://marmalade-repo.org/packages/org-ehtml.
    #+begin_src emacs-lisp
-     (mapc (lambda (path) (add-to-list 'load-path path))
-           '("path/to/elnode"
-             "path/to/org-mode/lisp"
-             "path/to/org-mode/contrib/lisp"
-             "path/to/org-ehtml/src"
-             "path/to/org-ehtml/test/lisp"))
+     (mapc (lambda (package) (add-to-list  'package-archives package))
+           '(("org"       . "http://orgmode.org/elpa/")
+             ("marmalade" . "http://marmalade-repo.org/packages/")))
+     (unless (package-installed-p 'org-ehtml) (package-install 'org-ehtml))
      (require 'test-org-ehtml)
    #+end_src
 
