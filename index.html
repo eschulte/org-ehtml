@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="Export Org-mode files as editable web pages"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-06T17:49-0600"/>
+<meta name="generated" content="2012-09-15T13:24-0600"/>
 <meta name="author" content="Eric Schulte"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -45,6 +45,30 @@
   /*]]>*/-->
 </style>
 <script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -108,16 +132,14 @@ Org-mode which are available from their respective repositories at
 <a href="http://orgmode.org/org-mode-download.html">http://orgmode.org/org-mode-download.html</a>.
 </p>
 <ol>
-<li>Load the required libraries.
+<li>Install using ELPA from <a href="http://marmalade-repo.org/packages/org-ehtml">http://marmalade-repo.org/packages/org-ehtml</a>.
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>mapc <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">lambda</span> <span style="color: #7f7f7f;">(</span>path<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>add-to-list 'load-path path<span style="color: #7f7f7f;">))</span>
-      '<span style="color: #7f7f7f;">(</span><span style="color: #e9b96e;">"path/to/elnode"</span>
-        <span style="color: #e9b96e;">"path/to/org-mode/lisp"</span>
-        <span style="color: #e9b96e;">"path/to/org-mode/contrib/lisp"</span>
-        <span style="color: #e9b96e;">"path/to/org-ehtml/src"</span>
-        <span style="color: #e9b96e;">"path/to/org-ehtml/test/lisp"</span><span style="color: #7f7f7f;">))</span>
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>mapc <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">lambda</span> <span style="color: #7f7f7f;">(</span>package<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>add-to-list  'package-archives package<span style="color: #7f7f7f;">))</span>
+      '<span style="color: #7f7f7f;">((</span><span style="color: #e9b96e;">"org"</span>       . <span style="color: #e9b96e;">"http://orgmode.org/elpa/"</span><span style="color: #7f7f7f;">)</span>
+        <span style="color: #7f7f7f;">(</span><span style="color: #e9b96e;">"marmalade"</span> . <span style="color: #e9b96e;">"http://marmalade-repo.org/packages/"</span><span style="color: #7f7f7f;">)))</span>
+<span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">unless</span> <span style="color: #7f7f7f;">(</span>package-installed-p 'org-ehtml<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>package-install 'org-ehtml<span style="color: #7f7f7f;">))</span>
 <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">test-org-ehtml</span><span style="color: #7f7f7f;">)</span>
 </pre>
 
@@ -176,7 +198,7 @@ Org-mode which are available from their respective repositories at
 
 
 
-<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">org-ehtml-server</span><span style="color: #7f7f7f;">)</span>
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">org-ehtml</span><span style="color: #7f7f7f;">)</span>
 
 <span style="color: #73d216;">;; </span><span style="color: #73d216;">Configure the server</span>
 <span style="color: #7f7f7f;">(</span>setq
@@ -279,12 +301,5 @@ src/org-ehtml-client.js.
 </div>
 </div>
 
-<div id="postamble">
-<p class="date">Date: 2012-08-16T00:47-0600</p>
-<p class="author">Author: Eric Schulte</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.8.11 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
-</div>
 </body>
 </html>
