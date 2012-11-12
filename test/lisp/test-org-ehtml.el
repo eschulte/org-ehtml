@@ -72,10 +72,13 @@
   (flet ((has (it)
               (goto-char (point-min))
               (should (re-search-forward (regexp-quote it) nil t))))
-    (let ((html-file (save-excursion
-                       (find-file test-org-ehtml-simple-file)
-                       (prog1 (org-ehtml-client-export-to-html)
-                         (kill-buffer)))))
+    (let ((html-file (expand-file-name
+		      (file-name-nondirectory
+		       (save-excursion
+			 (find-file test-org-ehtml-simple-file)
+			 (prog1 (org-ehtml-client-export-to-html)
+			   (kill-buffer))))
+		      test-org-ehtml-example-dir)))
       (while-visiting-file html-file
         ;; should include the ehtml css header
         (has ".edit_button")
@@ -89,8 +92,11 @@
         (has "<li>")))))
 
 (ert-deftest org-ehtml-export-file ()
-  (let ((html-file (org-ehtml-client-export-file
-                    test-org-ehtml-simple-file)))
+  (let ((html-file (expand-file-name
+		    (file-name-nondirectory
+		     (org-ehtml-client-export-file
+		      test-org-ehtml-simple-file))
+		    test-org-ehtml-example-dir)))
     (should (file-exists-p html-file))))
 
 
