@@ -25,7 +25,7 @@
 
 ;;; Code:
 (require 'elnode)
-(require 'org-ehtml-client)
+(require 'ox-ehtml)
 
 (defvar org-ehtml-docroot
   (expand-file-name "public_org" elnode-config-directory)
@@ -62,7 +62,7 @@ If any function in this hook returns nil then the edit is aborted.")
               (and (file-exists-p i-html) (setq file i-html)))))
     (elnode-send-file httpcon
       (if (member (file-name-extension file) '("org" "html"))
-          (org-ehtml-client-cached file) file)))
+          (ox-ehtml-cached file) file)))
    ;; directory listing
    ((file-directory-p file)
     (let ((pt (elnode-http-pathinfo httpcon)))

@@ -26,7 +26,7 @@
 ;;; Code:
 (let ((default-directory (file-name-directory
                           (or load-file-name (buffer-file-name)))))
-  (require 'org-ehtml-client (expand-file-name "org-ehtml-client.el"))
+  (require 'ox-ehtml (expand-file-name "ox-ehtml.el"))
   (require 'org-ehtml-server (expand-file-name "org-ehtml-server.el")))
 
 (provide 'org-ehtml)
