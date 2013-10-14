@@ -62,7 +62,7 @@ If any function in this hook returns nil then the edit is aborted.")
               (and (file-exists-p i-html) (setq file i-html)))))
     (elnode-send-file httpcon
       (if (member (file-name-extension file) '("org" "html"))
-          (ox-ehtml-cached file) file)))
+          (org-ehtml-cached file) file)))
    ;; directory listing
    ((file-directory-p file)
     (let ((pt (elnode-http-pathinfo httpcon)))
@@ -93,7 +93,7 @@ If any function in this hook returns nil then the edit is aborted.")
       (run-hooks 'org-ehtml-after-save-hook))
     (elnode-http-start httpcon "200" '("Content-type" . "text/html"))
     (elnode-http-return httpcon
-      (org-export-string org 'html org-ehtml-docroot))))
+      (org-export-string-as org 'html org-ehtml-docroot))))
 
 (provide 'org-ehtml-server)
 ;;; org-ehtml-server.el ends here

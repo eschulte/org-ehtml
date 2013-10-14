@@ -1,6 +1,6 @@
 ;;; ox-ehtml.el -- export of Org-mode to editable HTML
 
-;; Copyright (C) 2012 Eric Schulte <schulte.eric@gmail.com>
+;; Copyright (C) 2012-2013 Eric Schulte <schulte.eric@gmail.com>
 
 ;; Author: Eric Schulte <schulte.eric@gmail.com>
 ;; Keywords: org elnode javascript html
@@ -24,44 +24,47 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
-(require 'org)
 (require 'ox-html)
 (require 'org-ehtml-util)
 
-(defvar ox-ehtml-style
+(defvar org-ehtml-style
   (concat
    "<style type=\"text/css\">\n<!--/*--><![CDATA[/*><!--*/\n"
    (file-contents (expand-file-name "ox-ehtml.css" org-ehtml-base))
    "/*]]>*/-->\n</style>"))
 
-(defvar ox-ehtml-jquery
+(defvar org-ehtml-jquery
   "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
 
-(defvar ox-ehtml-js
+(defvar org-ehtml-js
   (file-contents (expand-file-name "ox-ehtml.js" org-ehtml-base)))
 
-(defun ox-ehtml-scripts ()
+(defun org-ehtml-scripts ()
   (concat
    "<script type=\"text/javascript\" src=\""
-   ox-ehtml-jquery "\"></script>"
+   org-ehtml-jquery "\"></script>"
    "<script type=\"text/javascript\">\n<!--/*--><![CDATA[/*><!--*/\n"
-   ox-ehtml-js
+   org-ehtml-js
    "/*]]>*///-->\n</script>\n"))
 
-(defvar ox-ehtml-wrap-template
+(defvar org-ehtml-wrap-template
   (concat
    "<div class=\"edit_in_place\">%html-text</div>"
    "<div class=\"raw-org\" contents-begin=\"%begin\" contents-end=\"%end\">"
    "%org-text</div>"))
 
-(defvar org-ehtml-everything-editable nil
-  "Set to a true value to everything exported by org-ehtml editable.")
+(defcustom org-ehtml-everything-editable nil
+  "Set to a true value to everything exported by org-ehtml editable."
+  :group 'org-export-ehtml
+  :type 'boolean)
 
-(defvar org-ehtml-editable-types
+(defcustom org-ehtml-editable-types
   '(paragraph plain-list table verbatim quote-block verse-block)
-  "Types of elements whose children should not be editable.")
+  "Types of elements whose children should not be editable."
+  :group 'org-export-ehtml
+  :type '(repeat symbol))
 
-(defun ox-ehtml-editable-p (element info)
+(defun org-ehtml-editable-p (element info)
   (let ((parent (org-export-get-parent element)))
     (cond ((eq (car parent) 'headline)
            (or org-ehtml-everything-editable
@@ -77,22 +80,23 @@
                          (car (read-from-string (match-string 1 val))))))
                 (cddr (cl-caddr parent)))))
           ((member (car parent) org-ehtml-editable-types) nil)
-          (t (ox-ehtml-editable-p parent info)))))
+          (t (org-ehtml-editable-p parent info)))))
 
 (defmacro def-ehtml-wrap (html-function)
   "Defines and returns an ehtml-wrapped version of HTML-FUNCTION."
-  (let ((fname (intern (concat "ox-ehtml"
-                               (substring (symbol-name html-function) 10)))))
+  (let ((fname (intern (replace-regexp-in-string
+                        "org-html-" "org-ehtml-"
+                        (symbol-name html-function)))))
     `(defun ,fname (element contents info)
-       ,(format "ehtml wrapper around `%s'." html-function)
+       ,(format "Editable html wrapper around `%s'." html-function)
        (let* ((original-contents (cl-copy-seq contents))
               (original-info     (cl-copy-seq info))
               (html-text (,html-function element contents info))
               (org-text  (or (org-element-interpret-data element)
                              original-contents
                              (error "no org-text found for %s" (car element)))))
-         (if (ox-ehtml-editable-p element info)
-             (org-fill-template ox-ehtml-wrap-template
+         (if (org-ehtml-editable-p element info)
+             (org-fill-template org-ehtml-wrap-template
               `(("html-text" . ,html-text)
                 ("org-text"  . ,org-text)
                 ("begin"     . ,(number-to-string
@@ -102,6 +106,18 @@
            html-text)))))
 
 (org-export-define-derived-backend 'ehtml 'html
+  :menu-entry
+  '(?e "Export to Editable HTML"
+       ((?H "To Temporary buffer" org-ehtml-export-as-html)
+        (?h "To file" org-ehtml-export-to-html)
+        (?o "To file and open"
+	    (lambda (a s v b)
+	      (if a (org-ehtml-export-to-html t s v b)
+		(org-open-file (org-ehtml-export-to-html nil s v b)))))))
+  :options-alist
+  '((:ehtml-everything-editable "HTML_EVERYTHING_EDITABLE" nil
+                                org-ehtml-everything-editable)
+    (:ehtml-editable-types nil nil org-ehtml-editable-types))
   :translate-alist
   `((paragraph   . ,(def-ehtml-wrap org-html-paragraph))
     (plain-list  . ,(def-ehtml-wrap org-html-plain-list))
@@ -111,27 +127,37 @@
     ;; (src-block   . ,(def-ehtml-wrap org-html-src-block))
     (verse-block . ,(def-ehtml-wrap org-html-verse-block))))
 
-(defun ox-ehtml-export-to-html
-  (&optional subtreep visible-only body-only ext-plist pub-dir)
-  "Export current buffer to an editable HTML file."
+(defun org-ehtml-export-as-html
+  (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to an HTML buffer.
+Based on `org-html-export-as-html'.'"
+  (interactive)
+  (org-export-to-buffer 'ehtml "*Org eHTML Export*"
+    async subtreep visible-only body-only ext-plist (lambda () (nxml-mode))))
+
+(defun org-ehtml-export-to-html
+  (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to an editable HTML file.
+Based on `org-html-export-to-html'.'"
   (interactive)
   (let* ((extension (concat "." org-html-extension))
-	 (file (org-export-output-file-name extension subtreep pub-dir))
+	 (file (org-export-output-file-name extension subtreep))
 	 (org-export-coding-system org-html-coding-system)
          ;; custom headers
          (org-html-style-default (concat org-html-style-default "\n"
-                                         ox-ehtml-style))
+                                         org-ehtml-style))
          (org-html-scripts (concat org-html-scripts "\n"
-                                     (ox-ehtml-scripts))))
-    (org-export-to-file 'ehtml file subtreep visible-only body-only ext-plist)))
+                                   (org-ehtml-scripts))))
+    (org-export-to-file 'ehtml file
+      async subtreep visible-only body-only ext-plist)))
 
-(defun ox-ehtml-export-file (file)
+(defun org-ehtml-export-file (file)
   "Export FILE's contents to editable HTML."
   (save-window-excursion
     (find-file file)
-    (ox-ehtml-export-to-html)))
+    (org-ehtml-export-to-html)))
 
-(defun ox-ehtml-cached (file)
+(defun org-ehtml-cached (file)
   "Export FILE to editable HTML if no previous export exists.
 If a previous HTML export of FILE exists but is older than FILE
 re-export."
@@ -145,7 +171,7 @@ re-export."
            (org (concat base ".org")))
       (if (and (file-exists-p org)
                (or (not (file-exists-p html)) (> (age html) (age org))))
-          (ox-ehtml-export-file org)
+          (org-ehtml-export-file org)
         html))))
 
 (provide 'ox-ehtml)
