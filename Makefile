@@ -45,11 +45,16 @@ check: $(SRC) $(TEST)
 
 test: check
 
-$(PACKAGE).tar: $(SRC) src/ox-ehtml.js src/ox-ehtml.css
+%.txt: %
+	$(BATCH_EMACS) $< -f org-ascii-export-to-ascii
+
+%.html: %
+	$(BATCH_EMACS) $< -f org-html-export-to-html
+
+$(PACKAGE).tar: $(SRC) src/ox-ehtml.js src/ox-ehtml.css README.txt
 	mkdir $(PACKAGE); \
 	cp $^ $(PACKAGE); \
-	$(BATCH_EMACS) README -f org-ascii-export-to-ascii; \
-	mv README.txt $(PACKAGE)/README; \
+	mv $(PACKAGE)/README.txt $(PACKAGE)/README; \
 	echo -e $(DEFPKG) > $(PACKAGE)/$(NAME)-pkg.el; \
 	tar cf $(PACKAGE).tar $(PACKAGE); \
 	rm -r $(PACKAGE)
