@@ -15,14 +15,14 @@
 ;;    edit through the web interface.
 
 ;;; Code:
-(require 'test-org-ehtml)
+(load "./test-org-ehtml.el")
 
 (defvar org-ehtml-port 3333 "Port used to run this example server.")
 
 (setq
- debug-on-error t                 ;; show debug info for any errors
- org-e-html-postamble nil         ;; don't export a postamble
- elnode-error-log-to-messages nil ;; stifle unhelpful & noisy elnode warnings
+ debug-on-error t                 ; show debug info for any errors
+ org-html-postamble nil           ; don't export a postamble
+ elnode-error-log-to-messages nil ; stifle unhelpful & noisy elnode warnings
  org-ehtml-docroot test-org-ehtml-example-dir)
 
 ;; stop the default org-ehtml server

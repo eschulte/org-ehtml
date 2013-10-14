@@ -25,7 +25,12 @@
 
 ;;; Code:
 (require 'ert)
-(require 'org-ehtml)
+(let ((src-dir (cl-reduce
+                (lambda (dd file) (expand-file-name file dd))
+                (reverse (list "org-ehtml.el" "src" ".." ".."))
+                :initial-value (file-name-directory
+                                (or load-file-name (buffer-file-name))))))
+  (require 'org-ehtml src-dir))
 
 (defvar test-org-ehtml-dir
   (file-name-directory (or load-file-name (buffer-file-name))))
@@ -69,7 +74,7 @@
 
 ;;; Export tests
 (ert-deftest org-ehtml-simple-export ()
-  (flet ((has (it)
+  (cl-flet ((has (it)
               (goto-char (point-min))
               (should (re-search-forward (regexp-quote it) nil t))))
     (let ((html-file (expand-file-name

@@ -24,8 +24,8 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
-(let* ((default-directory (file-name-directory
-                           (or load-file-name (buffer-file-name)))))
+(let ((default-directory (file-name-directory
+                          (or load-file-name (buffer-file-name)))))
   (require 'org-ehtml-client (expand-file-name "org-ehtml-client.el"))
   (require 'org-ehtml-server (expand-file-name "org-ehtml-server.el")))
 

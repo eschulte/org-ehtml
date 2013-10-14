@@ -24,7 +24,7 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
-(require 'cl)
+(require 'cl-lib)
 
 (defmacro while-visiting-file (file &rest body)
   "Execute BODY in a temporary buffer visiting FILE."

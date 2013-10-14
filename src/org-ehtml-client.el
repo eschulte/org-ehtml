@@ -25,10 +25,7 @@
 
 ;;; Code:
 (require 'org)
-(require 'org-exp)
-(require 'org-export)
-(require 'org-element)
-(require 'org-e-html)
+(require 'ox-html)
 (require 'org-ehtml-util)
 
 (defvar org-ehtml-client-style
@@ -71,26 +68,26 @@
                (member "EDITABLE" (org-export-get-tags parent info))))
           ((eq (car parent) 'org-data)
            (or org-ehtml-everything-editable
-               (some
+               (cl-some
                 (lambda (keyword)
                   (let ((key (plist-get (cadr keyword) :key))
                         (val (plist-get (cadr keyword) :value)))
                     (and (string= "PROPERTY" key)
                          (string-match "editable \\(.+\\)" val)
                          (car (read-from-string (match-string 1 val))))))
-                (cddr (caddr parent)))))
+                (cddr (cl-caddr parent)))))
           ((member (car parent) org-ehtml-editable-types) nil)
           (t (org-ehtml-client-editable-p parent info)))))
 
-(defmacro def-ehtml-wrap (e-html-function)
-  "Defines and returns an ehtml-wrapped version of E-HTML-FUNCTION."
+(defmacro def-ehtml-wrap (html-function)
+  "Defines and returns an ehtml-wrapped version of HTML-FUNCTION."
   (let ((fname (intern (concat "org-ehtml-client"
-                               (substring (symbol-name e-html-function) 10)))))
+                               (substring (symbol-name html-function) 10)))))
     `(defun ,fname (element contents info)
-       ,(format "ehtml wrapper around `%s'." e-html-function)
-       (let* ((original-contents (copy-seq contents))
-              (original-info     (copy-seq info))
-              (html-text (,e-html-function element contents info))
+       ,(format "ehtml wrapper around `%s'." html-function)
+       (let* ((original-contents (cl-copy-seq contents))
+              (original-info     (cl-copy-seq info))
+              (html-text (,html-function element contents info))
               (org-text  (or (org-element-interpret-data element)
                              original-contents
                              (error "no org-text found for %s" (car element)))))
@@ -104,27 +101,27 @@
                                  (plist-get (cadr element) :end)))))
            html-text)))))
 
-(eval `(org-export-define-derived-backend ehtml e-html
-         :translate-alist
-         ((paragraph   . ,(def-ehtml-wrap org-e-html-paragraph))
-          (plain-list  . ,(def-ehtml-wrap org-e-html-plain-list))
-          (table       . ,(def-ehtml-wrap org-e-html-table))
-          (verbatim    . ,(def-ehtml-wrap org-e-html-verbatim))
-          (quote-block . ,(def-ehtml-wrap org-e-html-quote-block))
-          ;; (src-block   . ,(def-ehtml-wrap org-e-html-src-block))
-          (verse-block . ,(def-ehtml-wrap org-e-html-verse-block)))))
+(org-export-define-derived-backend 'ehtml 'html
+  :translate-alist
+  `((paragraph   . ,(def-ehtml-wrap org-html-paragraph))
+    (plain-list  . ,(def-ehtml-wrap org-html-plain-list))
+    (table       . ,(def-ehtml-wrap org-html-table))
+    (verbatim    . ,(def-ehtml-wrap org-html-verbatim))
+    (quote-block . ,(def-ehtml-wrap org-html-quote-block))
+    ;; (src-block   . ,(def-ehtml-wrap org-html-src-block))
+    (verse-block . ,(def-ehtml-wrap org-html-verse-block))))
 
 (defun org-ehtml-client-export-to-html
   (&optional subtreep visible-only body-only ext-plist pub-dir)
   "Export current buffer to an editable HTML file."
   (interactive)
-  (let* ((extension (concat "." org-e-html-extension))
+  (let* ((extension (concat "." org-html-extension))
 	 (file (org-export-output-file-name extension subtreep pub-dir))
-	 (org-export-coding-system org-e-html-coding-system)
+	 (org-export-coding-system org-html-coding-system)
          ;; custom headers
-         (org-e-html-style-extra (concat org-e-html-style-extra "\n"
+         (org-html-style-default (concat org-html-style-default "\n"
                                          org-ehtml-client-style))
-         (org-e-html-scripts (concat org-e-html-scripts "\n"
+         (org-html-scripts (concat org-html-scripts "\n"
                                      (org-ehtml-client-scripts))))
     (org-export-to-file 'ehtml file subtreep visible-only body-only ext-plist)))
 
@@ -138,11 +135,11 @@
   "Export FILE to editable HTML if no previous export exists.
 If a previous HTML export of FILE exists but is older than FILE
 re-export."
-  (flet ((age (f)
-              (float-time
-               (time-subtract (current-time)
-                              (nth 5 (or (file-attributes (file-truename f))
-                                         (file-attributes f)))))))
+  (cl-flet ((age (f)
+                 (float-time
+                  (time-subtract (current-time)
+                                 (nth 5 (or (file-attributes (file-truename f))
+                                            (file-attributes f)))))))
     (let* ((base (file-name-sans-extension file))
            (html (concat base ".html"))
            (org (concat base ".org")))
