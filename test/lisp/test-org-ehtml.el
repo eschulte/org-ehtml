@@ -81,7 +81,7 @@
 		      (file-name-nondirectory
 		       (save-excursion
 			 (find-file test-org-ehtml-simple-file)
-			 (prog1 (org-ehtml-client-export-to-html)
+			 (prog1 (org-ehtml-export-to-html)
 			   (kill-buffer))))
 		      test-org-ehtml-example-dir)))
       (while-visiting-file html-file
@@ -90,16 +90,16 @@
         ;; should include the ehtml javascript header
         (has "set_clickable()")
         ;; the paragraph should be editable
-        (has "<div class=\"edit_in_place\"><p>")
+        (has "<div class=\"edit_in_place\"><p")
         ;; the plain list should be editable
-        (has "<div class=\"edit_in_place\"><ul>")
+        (has "<div class=\"edit_in_place\"><ul")
         ;; the elements of the plain list should not be editable
         (has "<li>")))))
 
 (ert-deftest org-ehtml-export-file ()
   (let ((html-file (expand-file-name
 		    (file-name-nondirectory
-		     (org-ehtml-client-export-file
+		     (org-ehtml-export-file
 		      test-org-ehtml-simple-file))
 		    test-org-ehtml-example-dir)))
     (should (file-exists-p html-file))))
