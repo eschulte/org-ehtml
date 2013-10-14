@@ -15,7 +15,7 @@
 ;;    edit through the web interface.
 
 ;;; Code:
-(load "./test-org-ehtml.el")
+(require 'test-org-ehtml)
 
 (defvar org-ehtml-port 3333 "Port used to run this example server.")
 

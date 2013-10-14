@@ -3,21 +3,21 @@ Export Org-mode files as editable web pages                -*- org -*-
 * Installation and Configuration Instructions
 
 You will need Emacs 24 or later, and recent versions of elnode and
-Org-mode which are available from their respective repositories at
-http://nicferrier.github.com/elnode/ and
-http://orgmode.org/org-mode-download.html.
+Org-mode which are available from http://nicferrier.github.com/elnode/
+and http://orgmode.org/org-mode-download.html respectively.
 
-1. Install using ELPA from http://marmalade-repo.org/packages/org-ehtml.
+1. Optionally install with ELPA from the marmalade repository
+   http://marmalade-repo.org/packages/org-ehtml.
    #+begin_src emacs-lisp
      (mapc (lambda (package) (add-to-list  'package-archives package))
            '(("org"       . "http://orgmode.org/elpa/")
              ("marmalade" . "http://marmalade-repo.org/packages/")))
      (unless (package-installed-p 'org-ehtml) (package-install 'org-ehtml))
-     (require 'test-org-ehtml)
    #+end_src
 
 2. Run the tests to make sure everything is working.
    #+begin_src emacs-lisp
+     (require 'test-org-ehtml)
      (ert "org-ehtml")
    #+end_src
 
@@ -65,6 +65,8 @@ http://orgmode.org/org-mode-download.html.
 To enable user authentication replace the 'org-ehtml-handler elnode
 handler with the 'org-ehtml-auth-handler from src/org-ehtml-auth.el.
 
+This may no longer work due to changes in elnode.
+
 * Integration with version control
 
 *Warning*: This could screw up your version control system as well as
@@ -91,6 +93,7 @@ server.  To do so, set ORGMODE and ELNODE environment variables to
 point to the development directories of Org-mode and elnode.  You can
 then run "make" to build the Emacs Lisp source or run "make example"
 to launch an example web server.
+
 * Issues
 ** Doesn't work with some versions of Chrome
 Specifically Version 21.0.1180.79 (151411) of chrome sends empty text
@@ -98,4 +101,4 @@ fields to the server resulting in the deletion of the edited portion
 of the Org-mode file.
 
 This is due to Chrome's miss-evaluation of line 14 or so of
-src/org-ehtml-client.js.
+src/ox-ehtml.js.

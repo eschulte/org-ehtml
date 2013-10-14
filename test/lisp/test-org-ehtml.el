@@ -25,6 +25,7 @@
 
 ;;; Code:
 (require 'ert)
+(require 'cl-lib)
 (let ((src-dir (cl-reduce
                 (lambda (dd file) (expand-file-name file dd))
                 (reverse (list "org-ehtml.el" "src" ".." ".."))
