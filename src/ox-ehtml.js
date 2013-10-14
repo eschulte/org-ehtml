@@ -1,4 +1,4 @@
-// Copyright (C) 2012 Eric Schulte <eric.schulte@gmx.com>
+// Copyright (C) 2012 Eric Schulte <schulte.eric@gmail.com>
 // License GPLV3
 
 // after the page loads, run the set set_clickable function

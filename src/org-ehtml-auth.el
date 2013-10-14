@@ -1,8 +1,8 @@
 ;;; org-ehtml-auth.el --- authenticated server for editable Org-mode files
 
-;; Copyright (C) 2012 Eric Schulte <eric.schulte@gmx.com>
+;; Copyright (C) 2012 Eric Schulte <schulte.eric@gmail.com>
 
-;; Author: Eric Schulte <eric.schulte@gmx.com>
+;; Author: Eric Schulte <schulte.eric@gmail.com>
 ;; Keywords: org elnode javascript html
 
 ;; This file is not (yet) part of GNU Emacs.
