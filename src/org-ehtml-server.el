@@ -41,6 +41,9 @@ If any function in this hook returns nil then the edit is aborted.")
 (defvar org-ehtml-dir-match "^\\([^\.].*[^~]\\|\\.\\.\\)$"
   "Match string passed to `directory-files-and-attributes' for dir listing.")
 
+(defvar org-ehtml-allow-agenda t
+  "If non-nil agenda views are allowed.")
+
 (defun org-ehtml-handler (httpcon)
   (elnode-log-access "org-ehtml" httpcon)
   (elnode-method httpcon
@@ -54,6 +57,31 @@ If any function in this hook returns nil then the edit is aborted.")
 
 (defun org-ehtml-serve-file (file httpcon)
   (cond
+   ;; agenda support
+   ((and org-ehtml-allow-agenda
+         (string-match "/agenda/\\([^/]*\\)\\(?:/\\(.*\\)\\)?" file))
+    (let ((cmd (match-string 1 file))
+          (params (when (match-string 2 file)
+                    (split-string (match-string 2 file) "/"))))
+      (pcase cmd
+        ((or `"day" `"week" `"fortnight" `"month" `"year")
+         (org-agenda-list nil nil (intern-soft cmd)))
+        (`"todo"
+         (org-todo-list))
+        (`"tags"
+         (let* ((todo-only (string= (car params) "todo"))
+                (match (if todo-only
+                           (cadr params)
+                         (car params))))
+           (if (and (stringp match) (string-match-p "\\S-" match))
+               (org-tags-view todo-only match)
+             (elnode-send-400 httpcon "Missing params."))))
+        (t
+         (elnode-send-400 httpcon (format "Unknown cmd `%s'" cmd))))
+      (with-current-buffer org-agenda-buffer-name
+        (let ((fname (make-temp-file "agenda-" nil ".html")))
+          (org-agenda-write fname)
+          (elnode-send-file httpcon fname)))))
    ;; normal files (including index.org or index.html if they exist)
    ((or (not (file-directory-p file))
         (let ((i-org  (expand-file-name "index.org" file))
