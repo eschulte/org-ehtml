@@ -64,10 +64,13 @@ If any function in this hook returns nil then the edit is aborted.")
           (params (when (match-string 2 file)
                     (split-string (match-string 2 file) "/"))))
       (pcase cmd
-        ((or `"day" `"week" `"fortnight" `"month" `"year")
+        ((or `"day" `"week" `"fortnight" `"month" `"year"
+             (pred (lambda (x) (string-match-p "[1-9][0-9]*" x))))
          (org-agenda-list nil
                           (when params (car params))
-                          (intern-soft cmd)))
+                          (if (string-match-p "[1-9][0-9]*" cmd)
+                              (string-to-number cmd)
+                            (intern-soft cmd))))
         (`"todo"
          (org-todo-list))
         (`"tags"
