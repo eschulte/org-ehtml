@@ -41,7 +41,7 @@ If any function in this hook returns nil then the edit is aborted.")
 (defvar org-ehtml-dir-match "^\\([^\.].*[^~]\\|\\.\\.\\)$"
   "Match string passed to `directory-files-and-attributes' for dir listing.")
 
-(defvar org-ehtml-allow-agenda t
+(defvar org-ehtml-allow-agenda nil
   "If non-nil agenda views are allowed.")
 
 (defun org-ehtml-handler (httpcon)
