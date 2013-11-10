@@ -65,7 +65,9 @@ If any function in this hook returns nil then the edit is aborted.")
                     (split-string (match-string 2 file) "/"))))
       (pcase cmd
         ((or `"day" `"week" `"fortnight" `"month" `"year")
-         (org-agenda-list nil nil (intern-soft cmd)))
+         (org-agenda-list nil
+                          (when params (car params))
+                          (intern-soft cmd)))
         (`"todo"
          (org-todo-list))
         (`"tags"
