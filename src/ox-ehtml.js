@@ -10,7 +10,7 @@ function set_clickable(){
   $('.edit_in_place')
     .before('<input type="button" value="EDIT" class="edit_button">');
   $('.edit_button').click(function(){
-    var main = $(this).next()
+    var main = $(this).next();
     var org  = main.next().html();
     var beg  = main.next().attr("contents-begin");
     var end  = main.next().attr("contents-end");
@@ -50,6 +50,10 @@ function save_changes(obj, org, beg, end){
           '<div class="edit_in_place">'+html+'</div>'+
             '<div class="raw-org" contents-begin="'+beg+
             '" contents-end="'+end+'">'+org+'</div>');
+        if(typeof(MathJax) !== 'undefined') {
+          MathJax.Hub.Queue(["Typeset", MathJax.Hub,
+                             $(obj).parent().parent().next().next().get()]);
+        }
         $(obj).parent().parent().next().remove();
         $(obj).parent().parent().remove();
         update_offsets(end, (org.length - (Number(end) - Number(beg))));
@@ -74,5 +78,5 @@ function update_offsets(end, delta){
     if(old_beg >= end) { $(this).attr('contents-begin', (old_beg + delta)); }
     var old_end = Number($(this).attr('contents-end'));
     if(old_end >= end) { $(this).attr('contents-end', (old_end + delta)); }
-  })
+  });
 };
