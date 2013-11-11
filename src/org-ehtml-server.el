@@ -81,8 +81,9 @@ If any function in this hook returns nil then the edit is aborted.")
            (if (and (stringp match) (string-match-p "\\S-" match))
                (org-tags-view todo-only match)
              (elnode-send-400 httpcon "Missing params."))))
-        (t
-         (elnode-send-400 httpcon (format "Unknown cmd `%s'" cmd))))
+        (_
+         (elnode-send-400 httpcon (format "Unknown Agenda Command `%s'.  Try\
+ <a href=\"/agenda/day\">day</a> or <a href=\"/agenda/todo\">todo</a>." cmd))))
       (with-current-buffer org-agenda-buffer-name
         (let ((fname (make-temp-file "agenda-" nil ".html")))
           (org-agenda-write fname)
