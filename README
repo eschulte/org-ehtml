@@ -85,6 +85,27 @@ commit all changes to a local version control system.
        (vc-checkin (list file) (vc-backend file) nil "edit through org-ehtml"))))
 #+end_src
 
+* Agenda View
+
+org-ehtml supports viewing the Agenda buffer.  It can be enabled by
+setting =org-ehtml-allow-agenda= to a non-nil value.  The agenda can
+be viewed by adding =/agenda/CMD= to the url with =CMD= being one of
+
+- day, week, fortnight, month, year :: Show =org-agenda-list= in that
+     range.  An additional argument can be provided to set the start
+     date.  E.g., http://localhost:8888/agenda/day/2013-11-11 to view
+     the agenda for the day of [2013-11-11 Mon]
+- any natural number ($n>0$) :: Show =org-agenda-list= for that many
+     days.  Similar to using =day=, =week=, etc.
+- todo :: Show =org-todo-list=.
+- tags :: Show =org-tags-view=.  It requires an additional argument
+          (separated by a /) specifying the tag.  Using =todo= as
+          first argument will limit the search to TODO entries.  E.g.,
+          http://localhost:8888/agenda/tags/work to show all headlines
+          tagged =:work:= and
+          http://localhost:8888/agenda/tags/todo/work to only show
+          headlines tagged =:work:= and marked TODO.
+
 * Using the Makefile
 
 Using the Makefile is not required in any way.  However, it may be
