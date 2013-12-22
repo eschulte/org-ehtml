@@ -1,14 +1,13 @@
 EMACS := emacs
 
 # Set these environment variables so that they point to the
-# development directories of Org-mode and elnode.
-ELPADIR ?= ~/.emacs.d/elpa/
-ORGMODE ?= $(wildcard $(ELPADIR)/org-mode*)
+# development directories of Org-mode and emacs-web-server.
+EWS ?= ~/.emacs.d/src/emacs-web-server
+ORGMODE ?= ~/.emacs.d/src/org-mode
 
 BATCH_EMACS=$(EMACS) --batch --execute \
    '(mapc (lambda (dir) (add-to-list (quote load-path) dir)) \
-     `(,@(mapcar (lambda (p) (expand-file-name p "$(ELPADIR)")) \
-                 (directory-files "$(ELPADIR)")) \
+      `("$(shell pwd)" "$(EWS)" \
        ,(expand-file-name "lisp" "$(ORGMODE)") \
        ,(expand-file-name "contrib/lisp" "$(ORGMODE)") \
        ,(expand-file-name "src" default-directory) \
@@ -18,13 +17,13 @@ BATCH_EMACS=$(EMACS) --batch --execute \
 NAME=org-ehtml
 VERSION=0.$(shell date +%Y%m%d)
 DOC="Export Org-mode files as editable web pages"
-REQ=((elnode \"20130416.1626\") (org-plus-contrib \"20131007\"))
+REQ=((emacs-web-server \"20130416.826\") (org-plus-contrib \"20131007\"))
 DEFPKG="(define-package \"$(NAME)\" \"$(VERSION)\" \n  \"$(DOC)\" \n  '$(REQ))"
 PACKAGE=$(NAME)-$(VERSION)
 
 .PHONY: all src example package clean check test
 
-# Filter auth until sync'd with newest version of elnode
+# Filter auth for now
 FULL_SRC=$(wildcard src/*.el)
 SRC=$(filter-out src/org-ehtml-auth.el,$(FULL_SRC))
 TEST=$(wildcard test/lisp/*.el)
@@ -38,7 +37,7 @@ src: $(SRC) $(TEST)
 	$(BATCH_EMACS) -f batch-byte-compile $^
 
 example: test/lisp/example.el
-	$(BATCH_EMACS) -l $^
+	$(filter-out --batch, $(BATCH_EMACS)) -Q -l $^
 
 check: $(SRC) $(TEST)
 	$(BATCH_EMACS) -l test/lisp/test-org-ehtml.el --eval '(ert t)'

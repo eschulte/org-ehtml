@@ -2,8 +2,8 @@
 
 ;;; Instructions:
 ;;
-;; 1. Set the ORGMODE and ELNODE environment variables to point to the
-;;    development directories for Org-mode and elnode.
+;; 1. Set the ORGMODE environment variable to point to the development
+;;    directory for Org-mode.
 ;;    
 ;; 2. Launch an Emacs process which will load this configuration and
 ;;    only this configuration using the Makefile as follows
@@ -22,12 +22,10 @@
 (setq
  debug-on-error t                 ; show debug info for any errors
  org-html-postamble nil           ; don't export a postamble
- elnode-error-log-to-messages nil ; stifle unhelpful & noisy elnode warnings
  org-ehtml-docroot test-org-ehtml-example-dir)
 
 ;; stop the default org-ehtml server
-(elnode-stop 8000)
-(elnode-start 'org-ehtml-handler :port org-ehtml-port)
+(ews-start org-ehtml-handler org-ehtml-port)
 
 (message "Serving example Org-mode file to http://localhost:%s" org-ehtml-port)
 (message "quit with C-c")

@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012 Eric Schulte <schulte.eric@gmail.com>
 
 ;; Author: Eric Schulte <schulte.eric@gmail.com>
-;; Keywords: org elnode javascript html
+;; Keywords: org web-server javascript html
 
 ;; This file is not (yet) part of GNU Emacs.
 ;; However, it is distributed under the same license.

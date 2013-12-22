@@ -16,7 +16,7 @@ A complex example including;
 Lorem ipsum *dolor* sit amet, consectetuer adipiscing elit. Donec
 hendrerit tempor tellus. Donec pretium posuere tellus. Proin quam
 nisl, tincidunt et, /mattis/ eget, convallis nec, purus. Cum sociis
-natoque penatibus et magnis dis parturient montes, nascetur ridiculus
+natoque penatibus et magnis dis *arturient* montes, nascetur ridiculus
 mus. Nulla posuere. Donec vitae dolor. Nullam _tristique_ diam non
 turpis. Cras placerat accumsan nulla. Nullam rutrum. Nam vestibulum
 accumsan nisl.
@@ -24,10 +24,13 @@ accumsan nisl.
 - one
 - two
 - three
-
+- four
+- five
+- six
 | one   | two  |
 | three | four |
 | five  | six  |
+| seven | eight |
 
 :    File System             Emacs                 Web Browser
 :   +------------------+   +------------------+   +--------------------+

@@ -2,9 +2,9 @@ Export Org-mode files as editable web pages                -*- org -*-
 
 * Installation and Configuration Instructions
 
-You will need Emacs 24 or later, and recent versions of elnode and
-Org-mode which are available from http://nicferrier.github.com/elnode/
-and http://orgmode.org/org-mode-download.html respectively.
+You will need Emacs 24.3 or later, Emacs Web Server and Org-mode which
+are available from https://github.com/eschulte/emacs-web-server and
+http://orgmode.org/org-mode-download.html respectively.
 
 1. Optionally install with ELPA from the marmalade repository
    http://marmalade-repo.org/packages/org-ehtml.
@@ -28,9 +28,9 @@ and http://orgmode.org/org-mode-download.html respectively.
      (setq org-ehtml-docroot test-org-ehtml-example-dir)
    #+end_src
 
-4. Start up elnode.
+4. Start up the web server.
    #+begin_src emacs-lisp
-     (elnode-start 'org-ehtml-handler :port 8888)
+     (ews-start org-ehtml-handler 8888)
    #+end_src
 
 5. Point your browser to http://localhost:8888/simple.org and move
@@ -54,18 +54,15 @@ and http://orgmode.org/org-mode-download.html respectively.
    )
 
   ;; Start the server
-  (elnode-start 'org-ehtml-handler :port my-org-ehtml-port)
+  (ews-start 'org-ehtml-handler my-org-ehtml-port)
 
   ;; Stop the server
-  ;; (elnode-stop my-org-ehtml-port)
+  ;; (mapc #'ews-stop ews-servers)
 #+end_src
 
 * User Authentication
 
-To enable user authentication replace the 'org-ehtml-handler elnode
-handler with the 'org-ehtml-auth-handler from src/org-ehtml-auth.el.
-
-This may no longer work due to changes in elnode.
+User Authentication currently only works in the elnode branch.
 
 * Integration with version control
 
@@ -110,10 +107,10 @@ be viewed by adding =/agenda/CMD= to the url with =CMD= being one of
 
 Using the Makefile is not required in any way.  However, it may be
 used to either compile the Emacs Lisp source, or to run a simple web
-server.  To do so, set ORGMODE and ELNODE environment variables to
-point to the development directories of Org-mode and elnode.  You can
-then run "make" to build the Emacs Lisp source or run "make example"
-to launch an example web server.
+server.  To do so, set ORGMODE environment variable to point to the
+development directories of Org-mode.  You can then run "make" to build
+the Emacs Lisp source or run "make example" to launch an example web
+server.
 
 * Issues
 ** Doesn't work with some versions of Chrome

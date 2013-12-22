@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012 Eric Schulte <schulte.eric@gmail.com>
 
 ;; Author: Eric Schulte <schulte.eric@gmail.com>
-;; Keywords: org elnode javascript html
+;; Keywords: org http javascript html
 
 ;; This file is not (yet) part of GNU Emacs.
 ;; However, it is distributed under the same license.
@@ -46,7 +46,7 @@
 
 (defun test-org-ehtml-url-to-string (url &optional params)
   (async-shell-command
-   (format "curl %s localhost:%s/%s"
+   (format "curl -m 4 %s localhost:%s/%s"
            (if params
                (format "-d %S"
                        (mapconcat (lambda (p) (format "%s=%s" (car p) (cdr p)))
@@ -62,14 +62,13 @@
 
 (defmacro test-org-ehtml-with (file html-var &rest body)
   (declare (indent 2))
-  `(let ((org-ehtml-docroot test-org-ehtml-example-dir)
-         (elnode--do-error-logging nil))
-     (elnode-start 'org-ehtml-handler :port test-org-ehtml-port)
+  `(let* ((org-ehtml-docroot test-org-ehtml-example-dir)
+          (srv (ews-start org-ehtml-handler test-org-ehtml-port)))
      (unwind-protect
          (let ((,html-var (test-org-ehtml-url-to-string
                            ,(car file) ,(cdr file))))
            ,@body)
-       (elnode-stop test-org-ehtml-port))))
+       (ews-stop srv))))
 (def-edebug-spec test-org-ehtml-with (form form body))
 
 
@@ -107,15 +106,15 @@
 
 
 ;;; server tests
-(ert-deftest org-ehtml-elnode-serve-simple ()
+(ert-deftest org-ehtml-serve-simple ()
   (test-org-ehtml-with ("simple.org") html
     (should (string-match "lorem" html))))
 
-(ert-deftest org-ehtml-elnode-serve-complex ()
+(ert-deftest org-ehtml-serve-complex ()
   (test-org-ehtml-with ("complex.org") html
     (should (string-match "lorem" html))))
 
-(ert-deftest org-ehtml-elnode-serve-all-editable ()
+(ert-deftest org-ehtml-serve-all-editable ()
   (test-org-ehtml-with ("all-editable.org") html
     (should (string-match "edit_in_place" html))))
 
@@ -137,7 +136,7 @@
         (insert original)
         (save-buffer)))))
 
-(ert-deftest org-ehtml-elnode-serve-difficult-chars ()
+(ert-deftest org-ehtml-serve-difficult-chars ()
   (test-org-ehtml-with ("difficult-chars.org") html
     (should (string-match "difficult characters" html))))
 

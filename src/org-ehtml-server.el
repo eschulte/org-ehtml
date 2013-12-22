@@ -1,9 +1,9 @@
-;;; org-ehtml-server.el --- elnode server for editable Org-mode files
+;;; org-ehtml-server.el --- emacs web server for editable Org-mode files
 
 ;; Copyright (C) 2012 Eric Schulte <schulte.eric@gmail.com>
 
 ;; Author: Eric Schulte <schulte.eric@gmail.com>
-;; Keywords: org elnode javascript html
+;; Keywords: org web-server javascript html
 
 ;; This file is not (yet) part of GNU Emacs.
 ;; However, it is distributed under the same license.
@@ -24,11 +24,14 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
-(require 'elnode)
+(require 'emacs-web-server)
 (require 'ox-ehtml)
 
 (defvar org-ehtml-docroot
-  (expand-file-name "public_org" elnode-config-directory)
+  (expand-file-name "public_org"
+                    (expand-file-name ".."
+                                      (file-name-directory
+                                       (or load-file-name (buffer-file-name)))))
   "Document root from which to serve Org-mode files.")
 
 (defvar org-ehtml-before-save-hook nil
@@ -44,18 +47,32 @@ If any function in this hook returns nil then the edit is aborted.")
 (defvar org-ehtml-allow-agenda nil
   "If non-nil agenda views are allowed.")
 
-(defun org-ehtml-handler (httpcon)
-  (elnode-log-access "org-ehtml" httpcon)
-  (elnode-method httpcon
-    (GET  (org-ehtml-file-handler httpcon))
-    (POST (org-ehtml-edit-handler httpcon))))
+(defvar org-ehtml-handler
+  '(((:GET  . ".*") . org-ehtml-file-handler)
+    ((:POST . ".*") . org-ehtml-edit-handler)))
 
-(defun org-ehtml-file-handler (httpcon)
-  (let ((elnode-docroot-for-no-404 t) (elnode-docroot-for-no-cache t))
-    (elnode-docroot-for org-ehtml-docroot :with file :on httpcon :do
-      (org-ehtml-serve-file file httpcon))))
+(defun org-ehtml-file-handler (proc request)
+  (let ((path (concat org-ehtml-docroot (cdr (assoc :GET request)))))
+    (if (ews-subdirectoryp org-ehtml-docroot path)
+        (org-ehtml-serve-file path proc request)
+      (ews-send-404 proc))))
 
-(defun org-ehtml-serve-file (file httpcon)
+(defun org-ehtml-send-400 (proc message)
+  "Send 400 to PROC with a MESSAGE."
+  (ews-response-header proc 400 '("Content-type" . "text/plain"))
+  (process-send-string proc message)
+  (throw 'close-connection nil))
+
+(defun org-ehtml-directory-list (proc directory)
+  (ews-response-header proc 200 '("Content-type" . "text/html"))
+  (process-send-string proc
+    (concat
+     "<ul>"
+     (mapconcat (lambda (file) (format "<li><a href=\"%s\">%s</a></li>" file file))
+                (directory-files directory) "\n")
+     "</ul>")))
+
+(defun org-ehtml-serve-file (file proc request)
   (cond
    ;; agenda support
    ((and org-ehtml-allow-agenda
@@ -80,39 +97,36 @@ If any function in this hook returns nil then the edit is aborted.")
                          (car params))))
            (if (and (stringp match) (string-match-p "\\S-" match))
                (org-tags-view todo-only match)
-             (elnode-send-400 httpcon "Missing params."))))
+             (org-ehtml-send-400 proc "Missing params."))))
         (_
-         (elnode-send-400 httpcon (format "Unknown Agenda Command `%s'.  Try\
+         (org-ehtml-send-400 proc (format "Unknown Agenda Command `%s'.  Try\
  <a href=\"/agenda/day\">day</a> or <a href=\"/agenda/todo\">todo</a>." cmd))))
       (with-current-buffer org-agenda-buffer-name
         (let ((fname (make-temp-file "agenda-" nil ".html")))
           (org-agenda-write fname)
-          (elnode-send-file httpcon fname)))))
+          (ews-send-file proc fname)))))
    ;; normal files (including index.org or index.html if they exist)
    ((or (not (file-directory-p file))
         (let ((i-org  (expand-file-name "index.org" file))
               (i-html (expand-file-name "index.html" file)))
           (or (and (file-exists-p i-org)  (setq file i-org))
               (and (file-exists-p i-html) (setq file i-html)))))
-    (elnode-send-file httpcon
+    (ews-send-file proc
       (if (member (file-name-extension file) '("org" "html"))
-          (org-ehtml-cached file) file)))
+          (org-ehtml-cached file) file)
+      '"text/html; charset=utf-8"))
    ;; directory listing
    ((file-directory-p file)
-    (let ((pt (elnode-http-pathinfo httpcon)))
-      (elnode-http-start httpcon 200 '("Content-type" . "text/html"))
-      (elnode-http-return httpcon
-        (elnode--webserver-index
-         org-ehtml-docroot file pt org-ehtml-dir-match))))
+    (org-ehtml-directory-list proc file))
    ;; none of the above -> missing file
-   (t (elnode-send-404 httpcon))))
+   (t (ews-send-404 proc))))
 
-(defun org-ehtml-edit-handler (httpcon)
-  (let* ((params (elnode-http-params httpcon))
-         (path       (substring (cdr (assoc "path" params)) 1))
-         (beg (string-to-number (cdr (assoc "beg"  params))))
-         (end (string-to-number (cdr (assoc "end"  params))))
-         (org                   (cdr (assoc "org"  params))))
+(defun org-ehtml-edit-handler (proc request)
+  (setq my-req request)
+  (let* ((path       (substring (cdr (assoc "path" request)) 1))
+         (beg (string-to-number (cdr (assoc "beg"  request))))
+         (end (string-to-number (cdr (assoc "end"  request))))
+         (org                   (cdr (assoc "org"  request))))
     (when (string= (file-name-nondirectory path) "")
       (setq path (concat path "index.org")))
     (when (string= (file-name-extension path) "html")
@@ -123,10 +137,10 @@ If any function in this hook returns nil then the edit is aborted.")
         (if (run-hook-with-args-until-failure 'org-ehtml-before-save-hook)
             (save-buffer)
           (replace-region (point-min) (point-max) orig)
-          (elnode-send-500 httpcon "edit failed `org-ehtml-before-save-hook'")))
+          (ews-send-500 proc "edit failed `org-ehtml-before-save-hook'")))
       (run-hooks 'org-ehtml-after-save-hook))
-    (elnode-http-start httpcon "200" '("Content-type" . "text/html"))
-    (elnode-http-return httpcon
+    (ews-response-header proc 200 '("Content-type" . "text/html; charset=utf-8"))
+    (process-send-string proc
       (org-export-string-as org 'html org-ehtml-docroot))))
 
 (provide 'org-ehtml-server)
