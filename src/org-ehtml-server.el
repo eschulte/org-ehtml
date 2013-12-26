@@ -54,7 +54,7 @@ If any function in this hook returns nil then the edit is aborted.")
 (defun org-ehtml-file-handler (request)
   (with-slots (process headers) request
     (let ((path (concat org-ehtml-docroot (cdr (assoc :GET headers)))))
-      (if (ews-subdirectoryp org-ehtml-docroot path)
+      (if (ews-in-directory-p org-ehtml-docroot path)
           (org-ehtml-serve-file path process)
         (ews-send-404 process)))))
 
