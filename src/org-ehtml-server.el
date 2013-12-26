@@ -51,11 +51,12 @@ If any function in this hook returns nil then the edit is aborted.")
   '(((:GET  . ".*") . org-ehtml-file-handler)
     ((:POST . ".*") . org-ehtml-edit-handler)))
 
-(defun org-ehtml-file-handler (proc request)
-  (let ((path (concat org-ehtml-docroot (cdr (assoc :GET request)))))
-    (if (ews-subdirectoryp org-ehtml-docroot path)
-        (org-ehtml-serve-file path proc request)
-      (ews-send-404 proc))))
+(defun org-ehtml-file-handler (request)
+  (with-slots (process headers) request
+    (let ((path (concat org-ehtml-docroot (cdr (assoc :GET headers)))))
+      (if (ews-subdirectoryp org-ehtml-docroot path)
+          (org-ehtml-serve-file path process)
+        (ews-send-404 process)))))
 
 (defun org-ehtml-send-400 (proc message)
   "Send 400 to PROC with a MESSAGE."
@@ -72,7 +73,7 @@ If any function in this hook returns nil then the edit is aborted.")
                 (directory-files directory) "\n")
      "</ul>")))
 
-(defun org-ehtml-serve-file (file proc request)
+(defun org-ehtml-serve-file (file proc)
   (cond
    ;; agenda support
    ((and org-ehtml-allow-agenda
@@ -121,27 +122,28 @@ If any function in this hook returns nil then the edit is aborted.")
    ;; none of the above -> missing file
    (t (ews-send-404 proc))))
 
-(defun org-ehtml-edit-handler (proc request)
-  (setq my-req request)
-  (let* ((path       (substring (cdr (assoc "path" request)) 1))
-         (beg (string-to-number (cdr (assoc "beg"  request))))
-         (end (string-to-number (cdr (assoc "end"  request))))
-         (org                   (cdr (assoc "org"  request))))
-    (when (string= (file-name-nondirectory path) "")
-      (setq path (concat path "index.org")))
-    (when (string= (file-name-extension path) "html")
-      (setq path (concat (file-name-sans-extension path) ".org")))
-    (org-babel-with-temp-filebuffer (expand-file-name path org-ehtml-docroot)
-      (let ((orig (buffer-string)))
-        (replace-region beg end org)
-        (if (run-hook-with-args-until-failure 'org-ehtml-before-save-hook)
-            (save-buffer)
-          (replace-region (point-min) (point-max) orig)
-          (ews-send-500 proc "edit failed `org-ehtml-before-save-hook'")))
-      (run-hooks 'org-ehtml-after-save-hook))
-    (ews-response-header proc 200 '("Content-type" . "text/html; charset=utf-8"))
-    (process-send-string proc
-      (org-export-string-as org 'html org-ehtml-docroot))))
+(defun org-ehtml-edit-handler (request)
+  (with-slots (process headers) request
+    (let* ((path       (substring (cdr (assoc "path" headers)) 1))
+           (beg (string-to-number (cdr (assoc "beg"  headers))))
+           (end (string-to-number (cdr (assoc "end"  headers))))
+           (org                   (cdr (assoc "org"  headers))))
+      (when (string= (file-name-nondirectory path) "")
+        (setq path (concat path "index.org")))
+      (when (string= (file-name-extension path) "html")
+        (setq path (concat (file-name-sans-extension path) ".org")))
+      (org-babel-with-temp-filebuffer (expand-file-name path org-ehtml-docroot)
+        (let ((orig (buffer-string)))
+          (replace-region beg end org)
+          (if (run-hook-with-args-until-failure 'org-ehtml-before-save-hook)
+              (save-buffer)
+            (replace-region (point-min) (point-max) orig)
+            (ews-send-500 process "edit failed `org-ehtml-before-save-hook'")))
+        (run-hooks 'org-ehtml-after-save-hook))
+      (ews-response-header process 200
+        '("Content-type" . "text/html; charset=utf-8"))
+      (process-send-string process
+        (org-export-string-as org 'html org-ehtml-docroot)))))
 
 (provide 'org-ehtml-server)
 ;;; org-ehtml-server.el ends here
