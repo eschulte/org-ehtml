@@ -1,8 +1,8 @@
 EMACS := emacs
 
 # Set these environment variables so that they point to the
-# development directories of Org-mode and emacs-web-server.
-WS ?= ~/.emacs.d/src/emacs-web-server
+# development directories of Org-mode and web-server.
+WS ?= ~/.emacs.d/src/web-server
 ORGMODE ?= ~/.emacs.d/src/org-mode
 
 BATCH_EMACS=$(EMACS) --batch --execute \
@@ -17,7 +17,7 @@ BATCH_EMACS=$(EMACS) --batch --execute \
 NAME=org-ehtml
 VERSION=0.$(shell date +%Y%m%d)
 DOC="Export Org-mode files as editable web pages"
-REQ=((emacs-web-server \"20130416.826\") (org-plus-contrib \"20131007\"))
+REQ=((web-server \"20130416.826\") (org-plus-contrib \"20131007\"))
 DEFPKG="(define-package \"$(NAME)\" \"$(VERSION)\" \n  \"$(DOC)\" \n  '$(REQ))"
 PACKAGE=$(NAME)-$(VERSION)
 
