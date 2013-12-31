@@ -25,7 +25,7 @@
  org-ehtml-docroot test-org-ehtml-example-dir)
 
 ;; stop the default org-ehtml server
-(ews-start org-ehtml-handler org-ehtml-port)
+(ws-start org-ehtml-handler org-ehtml-port)
 
 (message "Serving example Org-mode file to http://localhost:%s" org-ehtml-port)
 (message "quit with C-c")

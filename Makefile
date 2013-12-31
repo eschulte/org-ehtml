@@ -2,12 +2,12 @@ EMACS := emacs
 
 # Set these environment variables so that they point to the
 # development directories of Org-mode and emacs-web-server.
-EWS ?= ~/.emacs.d/src/emacs-web-server
+WS ?= ~/.emacs.d/src/emacs-web-server
 ORGMODE ?= ~/.emacs.d/src/org-mode
 
 BATCH_EMACS=$(EMACS) --batch --execute \
    '(mapc (lambda (dir) (add-to-list (quote load-path) dir)) \
-      `("$(shell pwd)" "$(EWS)" \
+      `("$(shell pwd)" "$(WS)" \
        ,(expand-file-name "lisp" "$(ORGMODE)") \
        ,(expand-file-name "contrib/lisp" "$(ORGMODE)") \
        ,(expand-file-name "src" default-directory) \

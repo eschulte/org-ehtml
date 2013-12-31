@@ -63,12 +63,12 @@
 (defmacro test-org-ehtml-with (file html-var &rest body)
   (declare (indent 2))
   `(let* ((org-ehtml-docroot test-org-ehtml-example-dir)
-          (srv (ews-start org-ehtml-handler test-org-ehtml-port)))
+          (srv (ws-start org-ehtml-handler test-org-ehtml-port)))
      (unwind-protect
          (let ((,html-var (test-org-ehtml-url-to-string
                            ,(car file) ,(cdr file))))
            ,@body)
-       (ews-stop srv))))
+       (ws-stop srv))))
 (def-edebug-spec test-org-ehtml-with (form form body))
 
 

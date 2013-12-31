@@ -54,18 +54,18 @@ If any function in this hook returns nil then the edit is aborted.")
 (defun org-ehtml-file-handler (request)
   (with-slots (process headers) request
     (let ((path (concat org-ehtml-docroot (cdr (assoc :GET headers)))))
-      (if (ews-in-directory-p org-ehtml-docroot path)
+      (if (ws-in-directory-p org-ehtml-docroot path)
           (org-ehtml-serve-file path process)
-        (ews-send-404 process)))))
+        (ws-send-404 process)))))
 
 (defun org-ehtml-send-400 (proc message)
   "Send 400 to PROC with a MESSAGE."
-  (ews-response-header proc 400 '("Content-type" . "text/plain"))
+  (ws-response-header proc 400 '("Content-type" . "text/plain"))
   (process-send-string proc message)
   (throw 'close-connection nil))
 
 (defun org-ehtml-directory-list (proc directory)
-  (ews-response-header proc 200 '("Content-type" . "text/html"))
+  (ws-response-header proc 200 '("Content-type" . "text/html"))
   (process-send-string proc
     (concat
      "<ul>"
@@ -105,14 +105,14 @@ If any function in this hook returns nil then the edit is aborted.")
       (with-current-buffer org-agenda-buffer-name
         (let ((fname (make-temp-file "agenda-" nil ".html")))
           (org-agenda-write fname)
-          (ews-send-file proc fname)))))
+          (ws-send-file proc fname)))))
    ;; normal files (including index.org or index.html if they exist)
    ((or (not (file-directory-p file))
         (let ((i-org  (expand-file-name "index.org" file))
               (i-html (expand-file-name "index.html" file)))
           (or (and (file-exists-p i-org)  (setq file i-org))
               (and (file-exists-p i-html) (setq file i-html)))))
-    (ews-send-file proc
+    (ws-send-file proc
       (if (member (file-name-extension file) '("org" "html"))
           (org-ehtml-cached file) file)
       '"text/html; charset=utf-8"))
@@ -120,7 +120,7 @@ If any function in this hook returns nil then the edit is aborted.")
    ((file-directory-p file)
     (org-ehtml-directory-list proc file))
    ;; none of the above -> missing file
-   (t (ews-send-404 proc))))
+   (t (ws-send-404 proc))))
 
 (defun org-ehtml-edit-handler (request)
   (with-slots (process headers) request
@@ -138,9 +138,9 @@ If any function in this hook returns nil then the edit is aborted.")
           (if (run-hook-with-args-until-failure 'org-ehtml-before-save-hook)
               (save-buffer)
             (replace-region (point-min) (point-max) orig)
-            (ews-send-500 process "edit failed `org-ehtml-before-save-hook'")))
+            (ws-send-500 process "edit failed `org-ehtml-before-save-hook'")))
         (run-hooks 'org-ehtml-after-save-hook))
-      (ews-response-header process 200
+      (ws-response-header process 200
         '("Content-type" . "text/html; charset=utf-8"))
       (process-send-string process
         (org-export-string-as org 'html org-ehtml-docroot)))))

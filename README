@@ -30,7 +30,7 @@ http://orgmode.org/org-mode-download.html respectively.
 
 4. Start up the web server.
    #+begin_src emacs-lisp
-     (ews-start org-ehtml-handler 8888)
+     (ws-start org-ehtml-handler 8888)
    #+end_src
 
 5. Point your browser to http://localhost:8888/simple.org and move
@@ -54,10 +54,10 @@ http://orgmode.org/org-mode-download.html respectively.
    )
 
   ;; Start the server
-  (ews-start 'org-ehtml-handler my-org-ehtml-port)
+  (ws-start 'org-ehtml-handler my-org-ehtml-port)
 
   ;; Stop the server
-  ;; (mapc #'ews-stop ews-servers)
+  ;; (mapc #'ws-stop ws-servers)
 #+end_src
 
 * User Authentication
