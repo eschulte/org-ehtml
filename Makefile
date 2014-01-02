@@ -33,7 +33,7 @@ all: src
 show-path:
 	$(BATCH_EMACS) --eval "(mapc (lambda (p) (message \"%S\" p)) load-path)"
 
-src: $(SRC) $(TEST)
+src: $(SRC)
 	$(BATCH_EMACS) -f batch-byte-compile $^
 
 example: test/lisp/example.el

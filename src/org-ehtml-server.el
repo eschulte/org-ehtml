@@ -27,6 +27,9 @@
 (require 'web-server)
 (require 'ox-ehtml)
 
+(declare-function org-agenda-write "org-agenda"
+		  (file &optional open nosettings agenda-bufname))
+
 (defvar org-ehtml-docroot
   (expand-file-name "public_org"
                     (expand-file-name ".."
@@ -73,6 +76,7 @@ If any function in this hook returns nil then the edit is aborted.")
                 (directory-files directory) "\n")
      "</ul>")))
 
+(defvar org-agenda-buffer-name)
 (defun org-ehtml-serve-file (file proc)
   (cond
    ;; agenda support
