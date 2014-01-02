@@ -7,8 +7,6 @@ are available from https://github.com/eschulte/emacs-web-server and
 http://orgmode.org/org-mode-download.html respectively.
 
 1. Optionally install with ELPA from http://melpa.milkbox.net/.
-   Otherwise manually install the Emacs web server from
-   https://github.com/eschulte/emacs-web-server.
    #+begin_src emacs-lisp
      (mapc (lambda (package) (add-to-list  'package-archives package))
            '(("org"       . "http://orgmode.org/elpa/")
