@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>README</title>
-<!-- 2013-10-14 Mon 10:07 -->
+<!-- 2014-01-02 Thu 14:18 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <style type="text/css">
@@ -90,7 +90,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -131,6 +131,48 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
 </head>
 <body>
 <div id="content">
@@ -143,10 +185,11 @@ for the JavaScript code in this tag.
 <li><a href="#sec-2">2. Run over your own local Org-mode files</a></li>
 <li><a href="#sec-3">3. User Authentication</a></li>
 <li><a href="#sec-4">4. Integration with version control</a></li>
-<li><a href="#sec-5">5. Using the Makefile</a></li>
-<li><a href="#sec-6">6. Issues</a>
+<li><a href="#sec-5">5. Agenda View</a></li>
+<li><a href="#sec-6">6. Using the Makefile</a></li>
+<li><a href="#sec-7">7. Issues</a>
 <ul>
-<li><a href="#sec-6-1">6.1. Doesn't work with some versions of Chrome</a></li>
+<li><a href="#sec-7-1">7.1. Doesn't work with some versions of Chrome</a></li>
 </ul>
 </li>
 </ul>
@@ -160,20 +203,19 @@ Export Org-mode files as editable web pages                -*- org -*-
 <h2 id="sec-1"><span class="section-number-2">1</span> Installation and Configuration Instructions</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-You will need Emacs 24 or later, and recent versions of elnode and
-Org-mode which are available from <a href="http://nicferrier.github.com/elnode/">http://nicferrier.github.com/elnode/</a>
-and <a href="http://orgmode.org/org-mode-download.html">http://orgmode.org/org-mode-download.html</a> respectively.
+You will need Emacs 24.3 or later, Emacs Web Server and Org-mode which
+are available from <a href="https://github.com/eschulte/emacs-web-server">https://github.com/eschulte/emacs-web-server</a> and
+<a href="http://orgmode.org/org-mode-download.html">http://orgmode.org/org-mode-download.html</a> respectively.
 </p>
 
 <ol class="org-ol">
-<li>Optionally install with ELPA from the marmalade repository
-   <a href="http://marmalade-repo.org/packages/org-ehtml">http://marmalade-repo.org/packages/org-ehtml</a>.
+<li>Optionally install with ELPA from <a href="http://melpa.milkbox.net/">http://melpa.milkbox.net/</a>.
 <div class="org-src-container">
 
-<pre class="src src-emacs-lisp">(mapc (<span style="font-weight: bold;">lambda</span> (package) (add-to-list  'package-archives package))
-      '((<span style="font-style: italic;">"org"</span>       . <span style="font-style: italic;">"http://orgmode.org/elpa/"</span>)
-        (<span style="font-style: italic;">"marmalade"</span> . <span style="font-style: italic;">"http://marmalade-repo.org/packages/"</span>)))
-(<span style="font-weight: bold;">unless</span> (package-installed-p 'org-ehtml) (package-install 'org-ehtml))
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>mapc <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">lambda</span> <span style="color: #7f7f7f;">(</span>package<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>add-to-list  'package-archives package<span style="color: #7f7f7f;">))</span>
+      '<span style="color: #7f7f7f;">((</span><span style="color: #e9b96e;">"org"</span>       . <span style="color: #e9b96e;">"http://orgmode.org/elpa/"</span><span style="color: #7f7f7f;">)</span>
+        <span style="color: #7f7f7f;">(</span><span style="color: #e9b96e;">"melpa"</span>     . <span style="color: #e9b96e;">"http://melpa.milkbox.net/packages/"</span><span style="color: #7f7f7f;">)))</span>
+<span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">unless</span> <span style="color: #7f7f7f;">(</span>package-installed-p 'org-ehtml<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>package-install 'org-ehtml<span style="color: #7f7f7f;">))</span>
 </pre>
 </div>
 </li>
@@ -181,8 +223,8 @@ and <a href="http://orgmode.org/org-mode-download.html">http://orgmode.org/org-m
 <li>Run the tests to make sure everything is working.
 <div class="org-src-container">
 
-<pre class="src src-emacs-lisp">(<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">test-org-ehtml</span>)
-(ert <span style="font-style: italic;">"org-ehtml"</span>)
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">test-org-ehtml</span><span style="color: #7f7f7f;">)</span>
+<span style="color: #7f7f7f;">(</span>ert <span style="color: #e9b96e;">"org-ehtml"</span><span style="color: #7f7f7f;">)</span>
 </pre>
 </div>
 </li>
@@ -192,15 +234,15 @@ just use the example files used in the tests, later you can
 customize this variable.
 <div class="org-src-container">
 
-<pre class="src src-emacs-lisp">(setq org-ehtml-docroot test-org-ehtml-example-dir)
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>setq org-ehtml-docroot test-org-ehtml-example-dir<span style="color: #7f7f7f;">)</span>
 </pre>
 </div>
 </li>
 
-<li>Start up elnode.
+<li>Start up the web server.
 <div class="org-src-container">
 
-<pre class="src src-emacs-lisp">(elnode-start 'org-ehtml-handler <span style="font-weight: bold;">:port</span> 8888)
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span>ws-start org-ehtml-handler 8888<span style="color: #7f7f7f;">)</span>
 </pre>
 </div>
 </li>
@@ -223,20 +265,20 @@ highlighted, click on these to edit.
 
 <div class="org-src-container">
 
-<pre class="src src-emacs-lisp">(<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">org-ehtml</span>)
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">org-ehtml</span><span style="color: #7f7f7f;">)</span>
 
-<span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Configure the server</span>
-(setq
+<span style="color: #73d216;">;; </span><span style="color: #73d216;">Configure the server</span>
+<span style="color: #7f7f7f;">(</span>setq
  org-ehtml-everything-editable t
- org-ehtml-docroot <span style="font-style: italic;">"~/path/to/your/files"</span>
+ org-ehtml-docroot <span style="color: #e9b96e;">"~/path/to/your/files"</span>
  my-org-ehtml-port 3333
- )
+ <span style="color: #7f7f7f;">)</span>
 
-<span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Start the server</span>
-(elnode-start 'org-ehtml-handler <span style="font-weight: bold;">:port</span> my-org-ehtml-port)
+<span style="color: #73d216;">;; </span><span style="color: #73d216;">Start the server</span>
+<span style="color: #7f7f7f;">(</span>ws-start 'org-ehtml-handler my-org-ehtml-port<span style="color: #7f7f7f;">)</span>
 
-<span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">Stop the server</span>
-<span style="font-weight: bold; font-style: italic;">;; </span><span style="font-weight: bold; font-style: italic;">(elnode-stop my-org-ehtml-port)</span>
+<span style="color: #73d216;">;; </span><span style="color: #73d216;">Stop the server</span>
+<span style="color: #73d216;">;; </span><span style="color: #73d216;">(mapc #'ws-stop ws-servers)</span>
 </pre>
 </div>
 </div>
@@ -245,12 +287,7 @@ highlighted, click on these to edit.
 <h2 id="sec-3"><span class="section-number-2">3</span> User Authentication</h2>
 <div class="outline-text-2" id="text-3">
 <p>
-To enable user authentication replace the 'org-ehtml-handler elnode
-handler with the 'org-ehtml-auth-handler from src/org-ehtml-auth.el.
-</p>
-
-<p>
-This may no longer work due to changes in elnode.
+User Authentication currently only works in the elnode branch.
 </p>
 </div>
 </div>
@@ -269,36 +306,67 @@ commit all changes to a local version control system.
 
 <div class="org-src-container">
 
-<pre class="src src-emacs-lisp">(<span style="font-weight: bold;">require</span> '<span style="font-weight: bold; text-decoration: underline;">vc</span>)
+<pre class="src src-emacs-lisp"><span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">require</span> '<span style="color: #e6a8df;">vc</span><span style="color: #7f7f7f;">)</span>
 
-(add-hook
+<span style="color: #7f7f7f;">(</span>add-hook
  'org-ehtml-after-save-hook
- (<span style="font-weight: bold;">lambda</span> ()
-   (<span style="font-weight: bold;">let</span> ((file (buffer-file-name (current-buffer))))
-     (vc-checkin (list file) (vc-backend file) nil <span style="font-style: italic;">"edit through org-ehtml"</span>))))
+ <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">lambda</span> <span style="color: #7f7f7f;">()</span>
+   <span style="color: #7f7f7f;">(</span><span style="color: #b4fa70;">let</span> <span style="color: #7f7f7f;">((</span>file <span style="color: #7f7f7f;">(</span>buffer-file-name <span style="color: #7f7f7f;">(</span>current-buffer<span style="color: #7f7f7f;">))))</span>
+     <span style="color: #7f7f7f;">(</span>vc-checkin <span style="color: #7f7f7f;">(</span>list file<span style="color: #7f7f7f;">)</span> <span style="color: #7f7f7f;">(</span>vc-backend file<span style="color: #7f7f7f;">)</span> nil <span style="color: #e9b96e;">"edit through org-ehtml"</span><span style="color: #7f7f7f;">))))</span>
 </pre>
 </div>
 </div>
 </div>
 <div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5"><span class="section-number-2">5</span> Using the Makefile</h2>
+<h2 id="sec-5"><span class="section-number-2">5</span> Agenda View</h2>
 <div class="outline-text-2" id="text-5">
 <p>
-Using the Makefile is not required in any way.  However, it may be
-used to either compile the Emacs Lisp source, or to run a simple web
-server.  To do so, set ORGMODE and ELNODE environment variables to
-point to the development directories of Org-mode and elnode.  You can
-then run "make" to build the Emacs Lisp source or run "make example"
-to launch an example web server.
+org-ehtml supports viewing the Agenda buffer.  It can be enabled by
+setting <code>org-ehtml-allow-agenda</code> to a non-nil value.  The agenda can
+be viewed by adding <code>/agenda/CMD</code> to the url with <code>CMD</code> being one of
 </p>
+
+<dl class="org-dl">
+<dt> day, week, fortnight, month, year </dt><dd>Show <code>org-agenda-list</code> in that
+range.  An additional argument can be provided to set the start
+date.  E.g., <a href="http://localhost:8888/agenda/day/2013-11-11">http://localhost:8888/agenda/day/2013-11-11</a> to view
+the agenda for the day of <span class="timestamp-wrapper"><span class="timestamp">[2013-11-11 Mon]</span></span>
+</dd>
+<dt> any natural number (\(n>0\)) </dt><dd>Show <code>org-agenda-list</code> for that many
+days.  Similar to using <code>day</code>, <code>week</code>, etc.
+</dd>
+<dt> todo </dt><dd>Show <code>org-todo-list</code>.
+</dd>
+<dt> tags </dt><dd>Show <code>org-tags-view</code>.  It requires an additional argument
+(separated by a /) specifying the tag.  Using <code>todo</code> as
+first argument will limit the search to TODO entries.  E.g.,
+<a href="http://localhost:8888/agenda/tags/work">http://localhost:8888/agenda/tags/work</a> to show all headlines
+tagged <code>:work:</code> and
+<a href="http://localhost:8888/agenda/tags/todo/work">http://localhost:8888/agenda/tags/todo/work</a> to only show
+headlines tagged <code>:work:</code> and marked TODO.
+</dd>
+</dl>
 </div>
 </div>
 <div id="outline-container-sec-6" class="outline-2">
-<h2 id="sec-6"><span class="section-number-2">6</span> Issues</h2>
+<h2 id="sec-6"><span class="section-number-2">6</span> Using the Makefile</h2>
 <div class="outline-text-2" id="text-6">
-</div><div id="outline-container-sec-6-1" class="outline-3">
-<h3 id="sec-6-1"><span class="section-number-3">6.1</span> Doesn't work with some versions of Chrome</h3>
-<div class="outline-text-3" id="text-6-1">
+<p>
+Using the Makefile is not required in any way.  However, it may be
+used to either compile the Emacs Lisp source, or to run a simple web
+server.  To do so, set ORGMODE environment variable to point to the
+development directories of Org-mode.  You can then run "make" to build
+the Emacs Lisp source or run "make example" to launch an example web
+server.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Issues</h2>
+<div class="outline-text-2" id="text-7">
+</div><div id="outline-container-sec-7-1" class="outline-3">
+<h3 id="sec-7-1"><span class="section-number-3">7.1</span> Doesn't work with some versions of Chrome</h3>
+<div class="outline-text-3" id="text-7-1">
 <p>
 Specifically Version 21.0.1180.79 (151411) of chrome sends empty text
 fields to the server resulting in the deletion of the edited portion
@@ -314,8 +382,8 @@ src/ox-ehtml.js.
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2013-10-14 Mon 10:07</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.1)</p>
+<p class="date">Created: 2014-01-02 Thu 14:18</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
