@@ -1,55 +1,77 @@
 #                                                          -*- org -*-
 
-* TODO upload package to marmalade after Org 7.9 release
+* Tasks [6/9]
+** CANCELED upload package to marmalade after Org 7.9 release
+  - State "CANCELED"   from "DONE"       [2014-01-03 Fri 12:35] \\
+    using melpa
 - update the Org-mode dependency in the Makefile
 - upload to marmalade
 
-* would be good to allow the addition of new handlers
+** would be good to allow the addition of new handlers
 and to include some default handlers in the repo, e.g.,
 - adding a new file when not present
 - adding a new heading
 - searching
 
-* TODO how to add a new headline
-* running through heroku
+** TODO how to add a new headline
+** running through heroku
 - a single instance on heroku is free
 - nicferrier has forked technomancy's heroku elisp package
 
 Try to make it easy to run org-ehtml on heroku.
 
-* possibly more cl-* wrinkles as Emacs dev continues
+** possibly more cl-* wrinkles as Emacs dev continues
 #+begin_quote Achim
 > Note that there's yet a new wrinkle with the upcoming release of the
 > 24.2 version (which hasn't made the change yet), so 24.1.50 and
 > 24.2.50 and later have new-style cl libraries...
 #+end_quote
 
-* TODO find good instructions for running behind a https proxy
-This would be required for secure use of elnode's authentication.
+** DONE find good instructions for running behind a https proxy
+This would be required for secure use of authentication.
 
-* DONE don't re-export if the html is newer than the org
-* DONE AJAX offset cleanup
+This ([[http://www.nczonline.net/blog/2012/08/08/setting-up-apache-as-a-ssl-front-end-for-play/][setting-up-apache-as-a-ssl-front-end-for-play]]) look pretty good
+
+: <VirtualHost *:443>
+:     ProxyPreserveHost On
+:     ServerName yourserver.com
+: 
+:     SSLEngine On
+:     SSLCertificateFile /etc/httpd/conf/server.crt
+:     SSLCertificateKeyFile /etc/httpd/conf/server.key
+: 
+:     # Require SSL for all pages
+:     <Location/>
+:         SSLRequireSSL
+:     </Location>
+: 
+:     ProxyPass / http://127.0.0.1:8888/
+:     ProxyPassReverse / http://127.0.0.1:8888/
+: </VirtualHost>
+
+** DONE don't re-export if the html is newer than the org
+** DONE AJAX offset cleanup
 After every edit, we will need to map through every element in the
 html document changing the contents-[begin|end] which are larger than
 the contents-end of the edited element to reflect the new offset.
 
-* TODO specialized editable html export for source code blocks
+** TODO specialized editable html export for source code blocks
 Rather than using [[file:src/org-ehtml-client.el::%3B%3B%20(src-block%20.%20,(def-ehtml-wrap%20org-e-html-src-block))][(def-ehtml-wrap org-e-html-src-block)]], write a
 specialized function for exporting code blocks to editable html.
 - should have an [execute] button
 
-** something special for "notebook" functionality with sessions?
+*** something special for "notebook" functionality with sessions?
 When code blocks have a :session, how difficult would it be to add
 functionality like the python web notebook interface.
 
-* DONE replace on-click edit with side edit button
+** DONE replace on-click edit with side edit button
 This will be much nicer for html elements that require clicks, like
 links in an editable paragraph.
 
-* TODO offer to add new files when they don't exist
+** TODO offer to add new files when they don't exist
 This would require another case in the `org-ehtml-file-handler'.
 
-* suggestions on testing from nicferrier
+** suggestions on testing from nicferrier
 : 15:29 < nicferrier> _schulte_:
 :                     https://github.com/nicferrier/elnode/blob/master/elnode-client.el#L534
 : 15:29 < _schulte_> nicferrier: great, thanks
@@ -66,7 +88,9 @@ This would require another case in the `org-ehtml-file-handler'.
 : 15:35 < nicferrier> _schulte_: if you're gonna do this you might also be interested in my
 :                     phantomjs stuff - let's you test elnode apps in a headless browser.
 
-* authentication with elnode
+** CANCELED authentication with elnode
+  - State "CANCELED"   from ""           [2014-01-03 Fri 12:37] \\
+    no longer user elnode
 #+begin_quote nicferrier
 I have the code in a branch on github. There is an example of doing
 authentication here:
