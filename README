@@ -1,0 +1,83 @@
+                              Org-ehtml
+             export Org-mode files as editable web pages
+
+DESCRIPTION
+    Org-ehtml allows for interactively viewing and editing Org-mode
+    files through a web browser.  The Emacs web server [1] serves
+    Org-mode files as editable HTML exported with a special ox-ehtml
+    backend which extends the standard Org-mode HTML export.
+
+    [1]  https://github.com/eschulte/emacs-web-server
+
+REQUIREMENTS
+    Emacs 24.3 or later and the Emacs web server [1].
+
+USAGE
+    1. Install from melpa [2] or source.
+
+       [2]  http://melpa.milkbox.net/
+
+    2. Optionally run the tests suite.
+
+       (require 'test-org-ehtml)
+       (ert "org-ehtml")
+
+    3. Configure Org-ehtml to serve a directory of Org-mode files on
+       your machine (e.g., "~/public_org"), and set all fields to be
+       editable.
+
+       (setq org-ehtml-docroot "~/public_org/")
+
+    4. Start up the web server.
+
+       (ws-start org-ehtml-handler 8888)
+
+    5. Point your browser to [3] select a page, and move your mouse
+       over the page.  Editable portions of the page will be
+       highlighted, click on these to edit.
+
+       [3]  http://localhost:8888
+
+EXTENSIONS
+
+    Integration with Version Control.
+
+      (require 'vc)
+
+      (add-hook
+       'org-ehtml-after-save-hook
+       (lambda ()
+         (let ((file (buffer-file-name (current-buffer))))
+           (vc-checkin (list file)
+                       (vc-backend file) nil "edit through org-ehtml"))))
+
+    Agenda View
+
+      Org-ehtml supports viewing the Agenda buffer.  It can be enabled
+      by setting org-ehtml-allow-agenda to a non-nil value.  The
+      agenda can be viewed by adding /agenda/CMD to the url with CMD
+      being one of the following.
+
+      day, week, fortnight, month, year:
+        Show org-agenda-list in that range.  For example [4] will show
+        the agenda for the specified day.  An additional argument can
+        be provided to set the start date.
+
+        [4]  http://localhost:8888/agenda/day/2013-11-11
+
+      any natural number:
+        Show org-agenda-list for that many days.  Similar to using
+        day, week, etc.
+
+      todo:
+        Show org-todo-list.
+
+      tags:
+        Show org-tags-view.  It requires an additional argument
+        (separated by a /) specifying the tag.  Using todo as first
+        argument will limit the search to TODO entries.  For example
+        [5] will show all headlines tagged :work: and [6] will only
+        show headlines tagged :work: and marked TODO.
+
+        [5]  http://localhost:8888/agenda/tags/work
+        [6]  http://localhost:8888/agenda/tags/todo/work
