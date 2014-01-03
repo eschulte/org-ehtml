@@ -24,8 +24,7 @@ PACKAGE=$(NAME)-$(VERSION)
 .PHONY: all src example package clean check test
 
 # Filter auth for now
-FULL_SRC=$(wildcard src/*.el)
-SRC=$(filter-out src/org-ehtml-auth.el,$(FULL_SRC))
+SRC=$(wildcard src/*.el)
 TEST=$(wildcard test/lisp/*.el)
 
 all: src
