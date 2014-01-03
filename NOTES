@@ -1,5 +1,118 @@
 #                                                          -*- org -*-
 
+* Usage
+** Installation and Configuration Instructions
+You will need Emacs 24.3 or later, Emacs Web Server and Org-mode which
+are available from https://github.com/eschulte/emacs-web-server and
+http://orgmode.org/org-mode-download.html respectively.
+
+1. Optionally install with ELPA from http://melpa.milkbox.net/.
+   #+begin_src emacs-lisp
+     (mapc (lambda (package) (add-to-list  'package-archives package))
+           '(("org"       . "http://orgmode.org/elpa/")
+             ("melpa"     . "http://melpa.milkbox.net/packages/")))
+     (unless (package-installed-p 'org-ehtml) (package-install 'org-ehtml))
+   #+end_src
+
+2. Run the tests to make sure everything is working.
+   #+begin_src emacs-lisp
+     (require 'test-org-ehtml)
+     (ert "org-ehtml")
+   #+end_src
+
+3. Set the root of your directory of Org-mode files.  For now we'll
+   just use the example files used in the tests, later you can
+   customize this variable.
+   #+begin_src emacs-lisp
+     (setq org-ehtml-docroot test-org-ehtml-example-dir)
+   #+end_src
+
+4. Start up the web server.
+   #+begin_src emacs-lisp
+     (ws-start org-ehtml-handler 8888)
+   #+end_src
+
+5. Point your browser to http://localhost:8888/simple.org and move
+   your mouse over the page.  Editable portions of the page will be
+   highlighted, click on these to edit.
+
+** Run over your own local Org-mode files
+*Warning*: Be sure you backup your files before you start editing them
+           through this experimental web interface as it could trash
+           your files.
+
+#+begin_src emacs-lisp
+  (require 'org-ehtml)
+
+  ;; Configure the server
+  (setq
+   org-ehtml-everything-editable t
+   org-ehtml-docroot "~/path/to/your/files"
+   my-org-ehtml-port 3333
+   )
+
+  ;; Start the server
+  (ws-start 'org-ehtml-handler my-org-ehtml-port)
+
+  ;; Stop the server
+  ;; (mapc #'ws-stop ws-servers)
+#+end_src
+
+** TODO User Authentication
+** Integration with version control
+*Warning*: This could screw up your version control system as well as
+           your flat files.
+
+org-ehtml provides an org-ehtml-after-save-hook which can be used to
+commit all changes to a local version control system.
+
+#+begin_src emacs-lisp
+  (require 'vc)
+  
+  (add-hook
+   'org-ehtml-after-save-hook
+   (lambda ()
+     (let ((file (buffer-file-name (current-buffer))))
+       (vc-checkin (list file) (vc-backend file) nil "edit through org-ehtml"))))
+#+end_src
+
+** Agenda View
+org-ehtml supports viewing the Agenda buffer.  It can be enabled by
+setting =org-ehtml-allow-agenda= to a non-nil value.  The agenda can
+be viewed by adding =/agenda/CMD= to the url with =CMD= being one of
+
+- day, week, fortnight, month, year :: Show =org-agenda-list= in that
+     range.  An additional argument can be provided to set the start
+     date.  E.g., http://localhost:8888/agenda/day/2013-11-11 to view
+     the agenda for the day of [2013-11-11 Mon]
+- any natural number ($n>0$) :: Show =org-agenda-list= for that many
+     days.  Similar to using =day=, =week=, etc.
+- todo :: Show =org-todo-list=.
+- tags :: Show =org-tags-view=.  It requires an additional argument
+          (separated by a /) specifying the tag.  Using =todo= as
+          first argument will limit the search to TODO entries.  E.g.,
+          http://localhost:8888/agenda/tags/work to show all headlines
+          tagged =:work:= and
+          http://localhost:8888/agenda/tags/todo/work to only show
+          headlines tagged =:work:= and marked TODO.
+
+** Using the Makefile
+Using the Makefile is not required in any way.  However, it may be
+used to either compile the Emacs Lisp source, or to run a simple web
+server.  To do so, set ORGMODE environment variable to point to the
+development directories of Org-mode.  You can then run "make" to build
+the Emacs Lisp source or run "make example" to launch an example web
+server.
+
+** Issues
+*** Doesn't work with some versions of Chrome
+Specifically Version 21.0.1180.79 (151411) of chrome sends empty text
+fields to the server resulting in the deletion of the edited portion
+of the Org-mode file.
+
+This is due to Chrome's miss-evaluation of line 14 or so of
+src/ox-ehtml.js.
+
 * Tasks [6/9]
 ** CANCELED upload package to marmalade after Org 7.9 release
   - State "CANCELED"   from "DONE"       [2014-01-03 Fri 12:35] \\
