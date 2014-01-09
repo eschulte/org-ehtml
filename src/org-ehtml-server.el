@@ -63,7 +63,7 @@ If any function in this hook returns nil then the edit is aborted.")
 
 (defun org-ehtml-send-400 (proc message)
   "Send 400 to PROC with a MESSAGE."
-  (ws-response-header proc 400 '("Content-type" . "text/plain"))
+  (ws-response-header proc 400 '("Content-type" . "text/html"))
   (process-send-string proc message)
   (throw 'close-connection nil))
 
@@ -103,6 +103,23 @@ If any function in this hook returns nil then the edit is aborted.")
            (if (and (stringp match) (string-match-p "\\S-" match))
                (org-tags-view todo-only match)
              (org-ehtml-send-400 proc "Missing params."))))
+        (`"custom"
+         (let ((custom org-agenda-custom-commands)
+               (prefixes nil)
+               (descriptions nil))
+           (while (setq entry (pop custom))
+             (setq key (car entry) desc (nth 1 entry))
+             (when (> (length key) 0)
+               (add-to-list 'prefixes key)
+               (add-to-list
+                'descriptions
+                (format "<a href=\"/agenda/custom/%s\">%s</a>:%s " key key desc))))
+           (if (member (car params) prefixes)
+               (org-agenda nil (car params))
+             (org-ehtml-send-400 proc
+                                 (format
+                                  "Invalid custom command.  Try %s."
+                                  (mapconcat 'identity descriptions " or "))))))
         (_
          (org-ehtml-send-400 proc (format "Unknown Agenda Command `%s'.  Try\
  <a href=\"/agenda/day\">day</a> or <a href=\"/agenda/todo\">todo</a>." cmd))))
