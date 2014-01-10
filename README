@@ -52,6 +52,20 @@ EXTENSIONS
            (vc-checkin (list file)
                        (vc-backend file) nil "edit through org-ehtml"))))
 
+    Authentication
+
+      NOTE: This uses HTTP BASIC authentication which is only secure
+      when used over a secure (HTTPS) connection.
+
+      Use the `ws-with-authentication' function to protect org-ehtml
+      functionality with credentials.  For example, the following
+      requires all edits require a user supplies the username "admin"
+      and the password "password".
+
+          (setf (cdr (assoc '(:POST . ".*") org-ehtml-handler))
+                (ws-with-authentication 'org-ehtml-edit-handler
+                                        '(("admin" . "password"))))
+
     Agenda View
 
       Org-ehtml supports viewing the Agenda buffer.  It can be enabled
