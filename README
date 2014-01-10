@@ -41,13 +41,13 @@ USAGE
 
 EXTENSIONS
 
-    Integration with Version Control.
+    Integration with Version Control
 
       (require 'vc)
 
       (add-hook
        'org-ehtml-after-save-hook
-       (lambda ()
+       (lambda (request)
          (let ((file (buffer-file-name (current-buffer))))
            (vc-checkin (list file)
                        (vc-backend file) nil "edit through org-ehtml"))))

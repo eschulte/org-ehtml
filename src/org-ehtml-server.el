@@ -42,7 +42,9 @@
 If any function in this hook returns nil then the edit is aborted.")
 
 (defvar org-ehtml-after-save-hook nil
-  "Hook run in a file buffer after saving web edits.")
+  "Hook run in a file buffer after saving web edits.
+Functions of this hook will be called on the `ws-request' object
+as their only argument.")
 
 (defvar org-ehtml-dir-match "^\\([^\.].*[^~]\\|\\.\\.\\)$"
   "Match string passed to `directory-files-and-attributes' for dir listing.")
@@ -160,7 +162,7 @@ If any function in this hook returns nil then the edit is aborted.")
               (save-buffer)
             (replace-region (point-min) (point-max) orig)
             (ws-send-500 process "edit failed `org-ehtml-before-save-hook'")))
-        (run-hooks 'org-ehtml-after-save-hook))
+        (run-hook-with-args 'org-ehtml-after-save-hook request))
       (ws-response-header process 200
         '("Content-type" . "text/html; charset=utf-8"))
       (process-send-string process
