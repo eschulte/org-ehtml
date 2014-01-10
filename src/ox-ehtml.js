@@ -59,7 +59,7 @@ function save_changes(obj, org, beg, end){
         update_offsets(end, (org.length - (Number(end) - Number(beg))));
         set_clickable();
       },
-      401: function(){ window.location.replace("/login/?to="+here); },
+      403: function(){ alert("Unauthorized"); }
       500: function(error){ alert('error:'+error); }
     }
   });
