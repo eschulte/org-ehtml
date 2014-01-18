@@ -31,6 +31,7 @@ USAGE
 
     4. Start up the web server.
 
+       (require 'org-ehtml)
        (ws-start org-ehtml-handler 8888)
 
     5. Point your browser to [3] select a page, and move your mouse
