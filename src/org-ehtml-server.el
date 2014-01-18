@@ -58,8 +58,9 @@ as their only argument.")
 
 (defun org-ehtml-file-handler (request)
   (with-slots (process headers) request
-    (let ((path (concat org-ehtml-docroot (cdr (assoc :GET headers)))))
-      (if (ws-in-directory-p org-ehtml-docroot path)
+    (let ((path (concat (expand-file-name org-ehtml-docroot)
+			(cdr (assoc :GET headers)))))
+      (if (ws-in-directory-p (expand-file-name org-ehtml-docroot) path)
           (org-ehtml-serve-file path process)
         (ws-send-404 process)))))
 
