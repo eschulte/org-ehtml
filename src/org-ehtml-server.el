@@ -70,15 +70,6 @@ as their only argument.")
   (process-send-string proc message)
   (throw 'close-connection nil))
 
-(defun org-ehtml-directory-list (proc directory)
-  (ws-response-header proc 200 '("Content-type" . "text/html"))
-  (process-send-string proc
-    (concat
-     "<ul>"
-     (mapconcat (lambda (file) (format "<li><a href=\"%s\">%s</a></li>" file file))
-                (directory-files directory) "\n")
-     "</ul>")))
-
 (defvar org-agenda-buffer-name)
 (defun org-ehtml-serve-file (file proc)
   (cond
@@ -142,7 +133,7 @@ as their only argument.")
       '"text/html; charset=utf-8"))
    ;; directory listing
    ((file-directory-p file)
-    (org-ehtml-directory-list proc file))
+    (ws-send-directory-list proc file))
    ;; none of the above -> missing file
    (t (ws-send-404 proc))))
 
