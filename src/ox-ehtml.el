@@ -25,6 +25,7 @@
 
 ;;; Code:
 (require 'ox-html)
+(require 'ox-org)
 (require 'org-ehtml-util)
 
 (defvar org-ehtml-style
@@ -54,7 +55,12 @@
    "%org-text</div>"))
 
 (defcustom org-ehtml-everything-editable nil
-  "Set to a true value to everything exported by org-ehtml editable."
+  "Set to a true value to make everything exported by org-ehtml editable."
+  :group 'org-export-ehtml
+  :type 'boolean)
+
+(defcustom org-ehtml-editable-headlines nil
+  "Set to a true value to make headines exported by org-ehtml editable."
   :group 'org-export-ehtml
   :type 'boolean)
 
@@ -64,9 +70,38 @@
   :group 'org-export-ehtml
   :type '(repeat symbol))
 
+(defvar org-ehtml-headline nil
+  "Used to pass headline from `org-ehtml-format-headline-wrap' to
+  `org-ehtml-format-headine-function'.")
+
+(defvar org-ehtml-info nil
+  "Used to pass info from `org-ehtml-format-headline-wrap' to
+  `org-ehtml-format-headine-function'.")
+
+(defun org-ehtml-format-headine-function (&rest args)
+  (let*
+      ((headline org-ehtml-headline)
+       (info org-ehtml-info)
+       (html (apply #'org-html-format-headline args))
+       (begin (number-to-string (org-element-property :begin headline)))
+       (end (number-to-string (org-element-property :contents-begin headline)))
+       (org (org-org-headline headline "" info)))
+    (org-fill-template org-ehtml-wrap-template
+                       `(("html-text" . ,html)
+                         ("org-text"  . ,org)
+                         ("begin"     . ,begin)
+                         ("end"       . ,end)))))
+
+(defun org-ehtml-format-headline-wrap (headline contents info)
+  (let ((org-html-format-headline-function #'org-ehtml-format-headine-function)
+        (org-ehtml-headline headline)
+        (org-ehtml-info info))
+    (org-html-headline headline contents info)))
+
 (defun org-ehtml-editable-p (element info)
   (let ((parent (org-export-get-parent element)))
-    (cond ((eq (car parent) 'headline)
+    (cond ((eq (car element) 'headline) org-ehtml-editable-headlines)
+          ((eq (car parent) 'headline)
            (or org-ehtml-everything-editable
                (member "EDITABLE" (org-export-get-tags parent info))))
           ((eq (car parent) 'org-data)
@@ -119,7 +154,9 @@
                                 org-ehtml-everything-editable)
     (:ehtml-editable-types nil nil org-ehtml-editable-types))
   :translate-alist
-  `((paragraph   . ,(def-ehtml-wrap org-html-paragraph))
+  `(,@(when org-ehtml-editable-headlines
+        `((headline . org-ehtml-format-headline-wrap)))
+    (paragraph   . ,(def-ehtml-wrap org-html-paragraph))
     (plain-list  . ,(def-ehtml-wrap org-html-plain-list))
     (table       . ,(def-ehtml-wrap org-html-table))
     (verbatim    . ,(def-ehtml-wrap org-html-verbatim))
