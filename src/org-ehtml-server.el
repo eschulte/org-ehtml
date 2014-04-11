@@ -158,7 +158,7 @@ as their only argument.")
       (ws-response-header process 200
         '("Content-type" . "text/html; charset=utf-8"))
       (process-send-string process
-        (org-export-string-as org 'html org-ehtml-docroot)))))
+        (org-export-string-as org 'html 'body-only '(:with-toc nil))))))
 
 (provide 'org-ehtml-server)
 ;;; org-ehtml-server.el ends here
