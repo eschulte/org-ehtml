@@ -130,7 +130,8 @@ as their only argument.")
     (ws-send-file proc
       (if (member (file-name-extension file) '("org" "html"))
           (org-ehtml-cached file) file)
-      '"text/html; charset=utf-8"))
+      (when (member (file-name-extension file) '("org" "html"))
+          '"text/html; charset=utf-8")))
    ;; directory listing
    ((file-directory-p file)
     (ws-send-directory-list proc file))
