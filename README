@@ -26,7 +26,8 @@ USAGE
        your machine (e.g., "~/public_org"), and set all fields to be
        editable.
 
-       (setq org-ehtml-docroot "/home/username/public_org/")
+       ;; NOTE: the org-ehtml-docroot value should be fully expanded
+       (setq org-ehtml-docroot (expand-file-name "~/public_org"))
        (setq org-ehtml-everything-editable t)
 
     4. Start up the web server.
