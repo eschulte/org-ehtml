@@ -93,9 +93,12 @@
                          ("end"       . ,end)))))
 
 (defun org-ehtml-format-headline-wrap (headline contents info)
-  (let ((org-html-format-headline-function #'org-ehtml-format-headine-function)
-        (org-ehtml-headline headline)
-        (org-ehtml-info info))
+  (if org-ehtml-editable-headlines
+      (let ((org-html-format-headline-function
+             #'org-ehtml-format-headine-function)
+            (org-ehtml-headline headline)
+            (org-ehtml-info info))
+        (org-html-headline headline contents info))
     (org-html-headline headline contents info)))
 
 (defun org-ehtml-editable-p (element info)
@@ -152,10 +155,11 @@
   :options-alist
   '((:ehtml-everything-editable "HTML_EVERYTHING_EDITABLE" nil
                                 org-ehtml-everything-editable)
+    (:ehtml-everything-editable "HTML_EDITABLE_HEADLINES" nil
+                                org-ehtml-editable-headlines)
     (:ehtml-editable-types nil nil org-ehtml-editable-types))
   :translate-alist
-  `(,@(when org-ehtml-editable-headlines
-        `((headline . org-ehtml-format-headline-wrap)))
+  `((headline    . org-ehtml-format-headline-wrap)
     (paragraph   . ,(def-ehtml-wrap org-html-paragraph))
     (plain-list  . ,(def-ehtml-wrap org-html-plain-list))
     (table       . ,(def-ehtml-wrap org-html-table))
