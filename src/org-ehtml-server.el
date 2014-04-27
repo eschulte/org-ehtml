@@ -46,7 +46,7 @@ and should not contain e.g., \"~\" for a user home directory."
                   (unless (string= expanded orig)
                     (warn "expanded `org-ehtml-docroot' from %S to %S"
                           orig expanded))
-                  (set-default-toplevel-value symbol expanded))))
+                  (set-default symbol expanded))))
 
 (defvar org-ehtml-before-save-hook nil
   "Hook run in a file buffer before saving web edits.
