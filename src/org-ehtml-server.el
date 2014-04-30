@@ -30,23 +30,29 @@
 (declare-function org-agenda-write "org-agenda"
 		  (file &optional open nosettings agenda-bufname))
 
-(defcustom org-ehtml-docroot
-  (expand-file-name "public_org"
-                    (expand-file-name ".."
-                                      (file-name-directory
-                                       (or load-file-name (buffer-file-name)))))
-  "Document root from which to serve Org-mode files.
+(defun org-ehtml-docroot-setter (symbol value)
+  "Function used to ensure `org-ehtml-docroot' is expanded when set."
+  (let* ((orig (eval value))
+         (expanded (expand-file-name orig)))
+    (unless (string= expanded orig)
+      (warn "expanded `org-ehtml-docroot' from %S to %S"
+            orig expanded))
+    (set-default symbol expanded)))
+
+(let ((default (expand-file-name
+                "public_org"
+                (expand-file-name
+                 ".."
+                 (file-name-directory
+                  (or load-file-name (buffer-file-name)))))))
+  (eval `(defcustom org-ehtml-docroot ,default
+           "Document root from which to serve Org-mode files.
 This value should be fully expanded as with `expand-file-name'
 and should not contain e.g., \"~\" for a user home directory."
-  :group 'org-ehtml
-  :type 'string
-  :initialize (lambda (symbol value)
-                (let* ((orig (eval value))
-                       (expanded (expand-file-name orig)))
-                  (unless (string= expanded orig)
-                    (warn "expanded `org-ehtml-docroot' from %S to %S"
-                          orig expanded))
-                  (set-default symbol expanded))))
+           :group 'org-ehtml
+           :type 'string
+           :risky t
+           :set #'org-ehtml-docroot-setter)))
 
 (defvar org-ehtml-before-save-hook nil
   "Hook run in a file buffer before saving web edits.
