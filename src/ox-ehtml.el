@@ -84,7 +84,10 @@
        (info org-ehtml-info)
        (html (apply #'org-html-format-headline args))
        (begin (number-to-string (org-element-property :begin headline)))
-       (end (number-to-string (org-element-property :contents-begin headline)))
+       (contents-begin (org-element-property :contents-begin headline))
+       (end (number-to-string (if contents-begin
+				  contents-begin
+				(org-element-property :end headline))))
        (org (org-org-headline headline "" info)))
     (org-fill-template org-ehtml-wrap-template
                        `(("html-text" . ,html)
