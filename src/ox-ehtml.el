@@ -158,7 +158,7 @@
   :options-alist
   '((:ehtml-everything-editable "HTML_EVERYTHING_EDITABLE" nil
                                 org-ehtml-everything-editable)
-    (:ehtml-everything-editable "HTML_EDITABLE_HEADLINES" nil
+    (:ehtml-editable-headlines "HTML_EDITABLE_HEADLINES" nil
                                 org-ehtml-editable-headlines)
     (:ehtml-editable-types nil nil org-ehtml-editable-types))
   :translate-alist
