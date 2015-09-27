@@ -220,7 +220,7 @@ re-export."
            (html (concat base ".html"))
            (org (concat base ".org")))
       (if (and (file-exists-p org)
-               (or (not (file-exists-p html)) (> (age html) (age org))))
+               (or (not (file-exists-p html)) (> (age html) (age org)) t))
           (expand-file-name (org-ehtml-export-file org) dir)
         html))))
 
