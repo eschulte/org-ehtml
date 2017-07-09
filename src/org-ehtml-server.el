@@ -89,6 +89,7 @@ as their only argument.")
 
 (defvar org-agenda-buffer-name)
 (defun org-ehtml-serve-file (file proc)
+  (setq file (url-unhex-string file))
   (cond
    ;; agenda support
    ((and org-ehtml-allow-agenda
