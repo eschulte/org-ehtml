@@ -137,8 +137,14 @@ as their only argument.")
  <a href=\"/agenda/day\">day</a> or <a href=\"/agenda/todo\">todo</a>." cmd))))
       (with-current-buffer org-agenda-buffer-name
         (let ((fname (make-temp-file "agenda-" nil ".html")))
-          (org-agenda-write fname)
-          (ws-send-file proc fname)))))
+	  (unwind-protect
+	      (progn 
+		(org-agenda-write fname)
+		(ws-send-file proc fname)
+		)
+	    (delete-file fname))
+	    ))
+      ))
    ;; normal files (including index.org or index.html if they exist)
    ((or (not (file-directory-p file))
         (let ((i-org  (expand-file-name "index.org" file))
