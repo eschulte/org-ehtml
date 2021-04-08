@@ -98,3 +98,9 @@ EXTENSIONS
 
         [5]  http://localhost:8888/agenda/tags/work
         [6]  http://localhost:8888/agenda/tags/todo/work
+
+STYLE
+
+    Override CSS by making a file in your home directory called
+    ~/.ox-ehtml-override.css and enter in your CSS in there. A
+    good theme is: https://github.com/oxalorg/sakura/
