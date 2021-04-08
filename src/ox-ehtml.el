@@ -31,7 +31,10 @@
 (defvar org-ehtml-style
   (concat
    "<style type=\"text/css\">\n<!--/*--><![CDATA[/*><!--*/\n"
-   (file-contents (expand-file-name "ox-ehtml.css" org-ehtml-base))
+   (file-contents (if (file-exists-p (expand-file-name "~/.ox-ehtml-override.css"))
+                      (expand-file-name "~/.ox-ehtml-override.css")
+                    (expand-file-name "ox-ehtml.css" org-ehtml-base)
+                    ))
    "/*]]>*/-->\n</style>"))
 
 (defvar org-ehtml-jquery
