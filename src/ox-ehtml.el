@@ -81,27 +81,32 @@
   "Used to pass info from `org-ehtml-format-headline-wrap' to
   `org-ehtml-format-headine-function'.")
 
-(defun org-ehtml-format-headine-function (&rest args)
-  (let*
-      ((headline org-ehtml-headline)
-       (info org-ehtml-info)
-       (html (apply #'org-html-format-headline args))
-       (begin (number-to-string (org-element-property :begin headline)))
-       (contents-begin (org-element-property :contents-begin headline))
-       (end (number-to-string (if contents-begin
-				  contents-begin
-				(org-element-property :end headline))))
-       (org (org-org-headline headline "" info)))
-    (org-fill-template org-ehtml-wrap-template
-                       `(("html-text" . ,html)
-                         ("org-text"  . ,org)
-                         ("begin"     . ,begin)
-                         ("end"       . ,end)))))
+(defun org-ehtml-format-headline-function (&rest args)
+  (if org-ehtml-headline
+      (let*
+          ((headline org-ehtml-headline)
+           (info org-ehtml-info)
+           (html (apply #'org-html-format-headline-default-function args))
+           (begin (number-to-string (org-element-property :begin headline)))
+           (contents-begin (org-element-property :contents-begin headline))
+           (end (number-to-string (if contents-begin
+                                      contents-begin
+                                    (org-element-property :end headline))))
+           (org (org-org-headline headline "" info)))
+        (org-fill-template org-ehtml-wrap-template
+                           `(("html-text" . ,html)
+                             ("org-text"  . ,org)
+                             ("begin"     . ,begin)
+                             ("end"       . ,end))))
+    ""))
 
 (defun org-ehtml-format-headline-wrap (headline contents info)
   (if org-ehtml-editable-headlines
       (let ((org-html-format-headline-function
-             #'org-ehtml-format-headine-function)
+             #'org-ehtml-format-headline-function)
+            (info (plist-put info
+                             :html-format-headline-function
+                             'org-ehtml-format-headline-function))
             (org-ehtml-headline headline)
             (org-ehtml-info info))
         (org-html-headline headline contents info))
@@ -218,7 +223,7 @@ re-export."
            (html (concat base ".html"))
            (org (concat base ".org")))
       (if (and (file-exists-p org)
-               (or (not (file-exists-p html)) (> (age html) (age org))))
+               (or (not (file-exists-p html)) (> (age html) (age org)) t))
           (expand-file-name (org-ehtml-export-file org) dir)
         html))))
 

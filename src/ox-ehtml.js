@@ -7,19 +7,24 @@ $(document).ready( function(){ set_clickable(); } );
 function set_clickable(){
   // add edit button to every element with class="edit_in_place"
   $('.edit_button').remove();
-  $('.edit_in_place')
-    .before('<input type="button" value="EDIT" class="edit_button">');
-  $('.edit_button').click(function(){
-    var main = $(this).next();
+  $('.edit_in_place').click(function(){
+    var main = $(this);
     var org  = main.next().html();
     var beg  = main.next().attr("contents-begin");
     var end  = main.next().attr("contents-end");
     var html = main.html();
     main.after(
-      '<div><textarea rows="10" cols="80">'+org+'</textarea><div>'+
+        '<div>'+
+            '<div class="btn-group" role="group" aria-label="...">'+
+            '<button type="button" class="btn btn-default" id="todobtn">TODO</button>'+
+            '<button type="button" class="btn btn-default" id="apptbtn">APPT</button>'+
+            '<button type="button" class="btn btn-default" id="cancelledbtn">CANCELLED</button>'+
+            '</div>'+
+        '<textarea rows="10" cols="80" id="orgtxt">'+org+'</textarea><div>'+
         '<input type="button" value="SAVE" class="save_button" />'+
         '<input type="button" value="CANCEL" class="cancel_button" />'+
-        '</div></div>');
+            '</div></div>');
+      $('#apptbtn').click(function(){ $('#orgtxt').val($('#orgtxt').val().replace("TODO", "APPT")) })
     // remove the orignal html
     $(this).remove(); main.remove();
     // call these functions when buttons are hit
@@ -28,11 +33,6 @@ function set_clickable(){
     });
     $('.cancel_button').click(function(){ abort_changes(this, html); });
   });
-  // TODO: show edit button on mousover
-  $('.edit_in_place').hover(function(){ $(this).prev().show(); },
-                            function(){ $(this).prev().hide(); } );
-  $('.edit_button').hover(function(){ $(this).show(); },
-                          function(){ $(this).hide(); } );
 };
 
 function save_changes(obj, org, beg, end){
