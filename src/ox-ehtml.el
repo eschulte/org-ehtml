@@ -81,6 +81,33 @@
   "Used to pass info from `org-ehtml-format-headline-wrap' to
   `org-ehtml-format-headine-function'.")
 
+(defun org-ehtml-propertize-buffer-positions (&optional backend)
+  "Propertize current buffer with buffer positions.
+The buffer positions are stored in the text property ehtml-pos.
+Ignore this functions unless BACKEND is nil or ehtml."
+  (when (or (null backend) (eq backend 'ehtml))
+    (org-with-wide-buffer
+     (cl-loop for pos from (point-min) upto (1- (point-max))
+	      do (put-text-property pos (1+ pos) 'ehtml-pos pos)))))
+;; Test: (with-current-buffer "*scratch*" (org-ehtml-propertize-buffer-positions 'ehtml))
+
+(add-hook 'org-export-before-processing-hook #'org-ehtml-propertize-buffer-positions 90)
+
+(defun org-ehtml-original-buffer-position (point &optional end)
+  "Get original buffer position at POINT.
+If this should be the end of a region set END to non-nil."
+  (or
+   (get-text-property point 'ehtml-pos)
+   (get-text-property (next-single-property-change point 'ehtml-pos nil (point-max)) 'ehtml-pos) ;; e.g., at text inserted by src-block evaluation
+   (let ((new-pt (get-text-property (previous-single-property-change point 'ehtml-pos nil (point-min)) 'ehtml-pos))) ;; e.g., at (point-max)
+     (and new-pt
+	  (if end (1+ new-pt)
+	    new-pt)))
+   (user-error "Cannot find original buffer position starting search at position %d" point)))
+;; Tests:
+;; (with-current-buffer "*scratch*" (org-ehtml-original-buffer-position (point-max) t))
+;; (with-current-buffer "*scratch*" (org-ehtml-original-buffer-position (point-min)))
+
 (defun org-ehtml-format-headine-function (&rest args)
   (let*
       ((headline org-ehtml-headline)
@@ -144,9 +171,11 @@
               `(("html-text" . ,html-text)
                 ("org-text"  . ,org-text)
                 ("begin"     . ,(number-to-string
-                                 (plist-get (cadr element) :begin)))
+				 (org-ehtml-original-buffer-position
+                                  (plist-get (cadr element) :begin))))
                 ("end"       . ,(number-to-string
-                                 (plist-get (cadr element) :end)))))
+				 (org-ehtml-original-buffer-position
+                                  (plist-get (cadr element) :end) t)))))
            html-text)))))
 
 (org-export-define-derived-backend 'ehtml 'html
