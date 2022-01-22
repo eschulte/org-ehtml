@@ -124,7 +124,7 @@ as their only argument.")
                (cl-pushnew key prefixes)
                (cl-pushnew
                 (format "<a href=\"/agenda/custom/%s\">%s</a>:%s " key key desc)
-		descriptions)))
+                descriptions)))
            (if (member (car params) prefixes)
                (org-agenda nil (car params))
              (org-ehtml-send-400 proc
