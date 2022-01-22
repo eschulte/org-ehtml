@@ -121,10 +121,10 @@ as their only argument.")
            (while (setq entry (pop custom))
              (setq key (car entry) desc (nth 1 entry))
              (when (> (length key) 0)
-               (add-to-list 'prefixes key)
-               (add-to-list
-                'descriptions
-                (format "<a href=\"/agenda/custom/%s\">%s</a>:%s " key key desc))))
+               (cl-pushnew key prefixes)
+               (cl-pushnew
+                (format "<a href=\"/agenda/custom/%s\">%s</a>:%s " key key desc)
+		descriptions)))
            (if (member (car params) prefixes)
                (org-agenda nil (car params))
              (org-ehtml-send-400 proc
